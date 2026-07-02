@@ -176,6 +176,44 @@ Open `.env` and fill in the values:
 
 ---
 
+## 🌍 Deployment
+
+### Backend on Render
+
+Deploy the repository as a Render web service using the root of this project.
+
+* **Build command**: `npm install`
+* **Start command**: `npm run server`
+* **Health check**: `/health`
+* **Required environment variables**:
+  * `JWT_SECRET`
+  * `REDIS_URL`
+  * `PORT` is provided automatically by Render
+  * `CLIENT_ORIGIN` set to your Vercel app URL
+  * `FRONTEND_URL` set to your Vercel app URL
+  * `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `EMAIL_FROM`, `ALERT_EMAIL_TO` if email delivery is enabled
+
+If you use the included [render.yaml](render.yaml), Render can import the service configuration directly from the repo.
+
+### Frontend on Vercel
+
+Deploy the same repository as a Vercel project with the project root set to this folder.
+
+* **Build command**: `npm run build`
+* **Output directory**: `dist`
+* **Environment variable**: `VITE_API_URL` set to the Render backend URL
+
+The included [vercel.json](vercel.json) keeps React Router routes working by rewriting all client-side paths to `index.html`.
+
+### Recommended URL Setup
+
+* Render backend URL example: `https://highre-backend.onrender.com`
+* Vercel frontend URL example: `https://highre-dashboard.vercel.app`
+* `VITE_API_URL` on Vercel: `https://highre-backend.onrender.com`
+* `CLIENT_ORIGIN` and `FRONTEND_URL` on Render: `https://highre-dashboard.vercel.app`
+
+---
+
 ## 🔌 API Reference
 
 ### Authentication Endpoints
