@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import nodemailer from 'nodemailer'
 import { clusterAlertEmailTemplate, passwordResetEmailTemplate, welcomeEmailTemplate } from './templates.js'
 

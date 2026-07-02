@@ -1,8 +1,6 @@
-import dotenv from 'dotenv'
+import 'dotenv/config'
 import { createApp } from './app.js'
 import { initializeStore, getStoreMode } from './redis/store.js'
-
-dotenv.config()
 
 const port = Number(process.env.PORT ?? 5000)
 
