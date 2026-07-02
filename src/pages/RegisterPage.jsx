@@ -8,6 +8,7 @@ const initialForm = {
   name: '',
   email: '',
   password: '',
+  confirmPassword: '',
 }
 
 export default function RegisterPage() {
@@ -18,6 +19,7 @@ export default function RegisterPage() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
+  const [showPasswords, setShowPasswords] = useState(false)
 
   useEffect(() => {
     if (isAuthenticated && !loading) {
@@ -36,12 +38,18 @@ export default function RegisterPage() {
     setError(null)
     setSuccess(null)
 
+    if (form.password !== form.confirmPassword) {
+      setError('Passwords do not match.')
+      setSubmitting(false)
+      return
+    }
+
     try {
-      await register(form)
+      const { confirmPassword, ...payload } = form
+      await register(payload)
       setSuccess('Account created. You are now signed in.')
       navigate('/', { replace: true })
     } catch (registerError) {
-      // Provide more helpful error messages when possible
       const serverMessage = registerError?.response?.data?.message
       const networkMessage = registerError?.message
       setError(serverMessage ?? networkMessage ?? 'Unable to create the account right now.')
@@ -72,7 +80,31 @@ export default function RegisterPage() {
           </div>
           <div className="form-field">
             <label className="form-label">Password</label>
-            <input className="form-input" type="password" name="password" value={form.password} onChange={handleChange} placeholder="Create a strong password" required />
+            <div className="password-field">
+              <input className="form-input" type={showPasswords ? 'text' : 'password'} name="password" value={form.password} onChange={handleChange} placeholder="Create a strong password" required />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPasswords((current) => !current)}
+                aria-label={showPasswords ? 'Hide password' : 'Show password'}
+              >
+                {showPasswords ? 'Hide' : 'Show'}
+              </button>
+            </div>
+          </div>
+          <div className="form-field">
+            <label className="form-label">Confirm password</label>
+            <div className="password-field">
+              <input className="form-input" type={showPasswords ? 'text' : 'password'} name="confirmPassword" value={form.confirmPassword} onChange={handleChange} placeholder="Confirm your password" required />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPasswords((current) => !current)}
+                aria-label={showPasswords ? 'Hide password' : 'Show password'}
+              >
+                {showPasswords ? 'Hide' : 'Show'}
+              </button>
+            </div>
           </div>
 
           {error ? <div className="form-alert form-alert--error">{error}</div> : null}

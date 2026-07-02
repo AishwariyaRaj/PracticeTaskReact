@@ -263,6 +263,24 @@
 /* Forms */
 .form-field { display: grid; gap: 6px; }
 .form-label { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); }
+.password-field { position: relative; display: flex; align-items: center; }
+.password-field .form-input { padding-right: 88px; }
+.password-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: var(--primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 8px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+.password-toggle:hover { background: var(--primary-light); color: var(--primary-hover); }
 .form-input, .form-select, .form-textarea {
   width: 100%; padding: 10px 14px;
   border: 1px solid var(--border); border-radius: var(--radius-sm);

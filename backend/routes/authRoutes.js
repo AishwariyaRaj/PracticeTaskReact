@@ -35,7 +35,7 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'Name, email, and password are required.' })
     }
 
-    console.log(`[Register] Creating account for: ${email}`)
+    console.log('[Register] Creating account request received.')
     const existingUser = await findUserByEmail(email)
     if (existingUser) {
       return res.status(409).json({ message: 'An account already exists for this email address.' })
@@ -50,15 +50,15 @@ router.post('/register', async (req, res) => {
     }
 
     await upsertUser(user)
-    console.log(`[Register] User registered in database successfully: ${email}`)
+    console.log('[Register] User registered successfully.')
 
     const token = buildToken(user)
 
     // Send welcome email but do not fail registration if email sending fails
     try {
-      console.log(`[Register] Sending welcome email to: ${user.email}`)
+      console.log('[Register] Sending welcome email.')
       await sendWelcomeEmail({ to: user.email, name: user.name })
-      console.log(`[Register] Welcome email successfully sent to: ${user.email}`)
+      console.log('[Register] Welcome email sent successfully.')
     } catch (emailError) {
       console.warn('[Register] Failed to send welcome email:', emailError?.message ?? emailError)
     }
@@ -109,14 +109,14 @@ router.post('/forgot-password', async (req, res) => {
       return res.status(400).json({ message: 'Email is required.' })
     }
 
-    console.log(`[Forgot Password] Request received for email: ${email}`)
+    console.log('[Forgot Password] Request received.')
     const user = await findUserByEmail(email)
     if (!user) {
-      console.log(`[Forgot Password] User not found in database for email: ${email}`)
+      console.log('[Forgot Password] User not found.')
       return res.json({ message: 'If the email exists, a reset link has been sent.' })
     }
 
-    console.log(`[Forgot Password] User found: ${user.name}. Generating token and sending reset email...`)
+    console.log('[Forgot Password] User found. Generating reset token and sending email...')
     const resetToken = randomUUID()
     const resetTokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString()
     const updatedUser = {
@@ -131,7 +131,7 @@ router.post('/forgot-password', async (req, res) => {
     const resetUrl = `${frontendUrl}/reset-password?email=${encodeURIComponent(user.email)}&token=${encodeURIComponent(resetToken)}`
     
     await sendPasswordResetEmail({ to: user.email, resetUrl })
-    console.log(`[Forgot Password] Reset email successfully sent to: ${user.email}`)
+    console.log('[Forgot Password] Reset email sent successfully.')
 
     return res.json({ message: 'If the email exists, a reset link has been sent.' })
   } catch (error) {
