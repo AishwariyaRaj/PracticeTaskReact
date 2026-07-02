@@ -9,9 +9,22 @@ import { requireAuth } from './middleware/auth.js'
 export function createApp() {
   const app = express()
 
+  const allowedOrigins = [
+    process.env.CLIENT_ORIGIN,
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:5175',
+  ].filter(Boolean)
+
   app.use(
     cors({
-      origin: process.env.CLIENT_ORIGIN ?? 'http://localhost:5173',
+      origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin) || origin.startsWith('http://localhost:')) {
+          callback(null, true)
+        } else {
+          callback(new Error('Not allowed by CORS'))
+        }
+      },
       credentials: true,
     })
   )

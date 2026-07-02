@@ -145,7 +145,17 @@ export async function initializeStore() {
     return { connected, useMemory }
   }
 
-  client = createClient({ url: getRedisUrl() })
+  client = createClient({
+    url: getRedisUrl(),
+    socket: {
+      reconnectStrategy: (retries) => {
+        if (retries > 1) {
+          return false
+        }
+        return 500
+      },
+    },
+  })
   client.on('error', () => {
     useMemory = true
     connected = false
