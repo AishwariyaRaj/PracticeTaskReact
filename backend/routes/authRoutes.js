@@ -35,6 +35,7 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'Name, email, and password are required.' })
     }
 
+    console.log(`[Register] Creating account for: ${email}`)
     const existingUser = await findUserByEmail(email)
     if (existingUser) {
       return res.status(409).json({ message: 'An account already exists for this email address.' })
@@ -49,14 +50,17 @@ router.post('/register', async (req, res) => {
     }
 
     await upsertUser(user)
+    console.log(`[Register] User registered in database successfully: ${email}`)
 
     const token = buildToken(user)
 
     // Send welcome email but do not fail registration if email sending fails
     try {
+      console.log(`[Register] Sending welcome email to: ${user.email}`)
       await sendWelcomeEmail({ to: user.email, name: user.name })
+      console.log(`[Register] Welcome email successfully sent to: ${user.email}`)
     } catch (emailError) {
-      console.warn('Failed to send welcome email:', emailError?.message ?? emailError)
+      console.warn('[Register] Failed to send welcome email:', emailError?.message ?? emailError)
     }
 
     return res.status(201).json({
@@ -105,11 +109,14 @@ router.post('/forgot-password', async (req, res) => {
       return res.status(400).json({ message: 'Email is required.' })
     }
 
+    console.log(`[Forgot Password] Request received for email: ${email}`)
     const user = await findUserByEmail(email)
     if (!user) {
+      console.log(`[Forgot Password] User not found in database for email: ${email}`)
       return res.json({ message: 'If the email exists, a reset link has been sent.' })
     }
 
+    console.log(`[Forgot Password] User found: ${user.name}. Generating token and sending reset email...`)
     const resetToken = randomUUID()
     const resetTokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString()
     const updatedUser = {
@@ -122,10 +129,13 @@ router.post('/forgot-password', async (req, res) => {
 
     const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:5173'
     const resetUrl = `${frontendUrl}/reset-password?email=${encodeURIComponent(user.email)}&token=${encodeURIComponent(resetToken)}`
+    
     await sendPasswordResetEmail({ to: user.email, resetUrl })
+    console.log(`[Forgot Password] Reset email successfully sent to: ${user.email}`)
 
     return res.json({ message: 'If the email exists, a reset link has been sent.' })
   } catch (error) {
+    console.error(`[Forgot Password] Error sending reset email:`, error)
     return res.status(500).json({ message: 'Unable to process password reset request.' })
   }
 })
