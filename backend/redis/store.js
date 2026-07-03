@@ -35,6 +35,48 @@ const initialSwitches = [
     config: 'Edge security profile',
     status: 'Inactive',
   },
+  {
+    id: 'SW-1005',
+    model: 'Cisco Catalyst 3850',
+    physicalDevice: 'Rack E / Unit 02',
+    config: 'Gigabit Ethernet stack uplink template',
+    status: 'Active',
+  },
+  {
+    id: 'SW-1006',
+    model: 'Juniper EX3400',
+    physicalDevice: 'Rack F / Unit 14',
+    config: 'VLAN tagging & voice routing profile',
+    status: 'Active',
+  },
+  {
+    id: 'SW-1007',
+    model: 'Aruba CX 6300M',
+    physicalDevice: 'Rack G / Unit 22',
+    config: 'Core spine-leaf distribution template',
+    status: 'Maintenance',
+  },
+  {
+    id: 'SW-1008',
+    model: 'Ubiquiti UniFi Pro 48',
+    physicalDevice: 'Rack H / Unit 10',
+    config: 'PoE camera and VoIP power allocation config',
+    status: 'Active',
+  },
+  {
+    id: 'SW-1009',
+    model: 'Cisco Nexus 9300',
+    physicalDevice: 'Rack I / Unit 01',
+    config: '100G Data Center core routing policy',
+    status: 'Inactive',
+  },
+  {
+    id: 'SW-1010',
+    model: 'Dell PowerConnect 5548',
+    physicalDevice: 'Rack J / Unit 18',
+    config: 'Legacy backup virtualization cluster link',
+    status: 'Maintenance',
+  },
 ]
 
 const initialChartData = Array.from({ length: 24 }, (_, index) => {
