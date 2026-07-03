@@ -54,14 +54,11 @@ router.post('/register', async (req, res) => {
 
     const token = buildToken(user)
 
-    // Send welcome email but do not fail registration if email sending fails
-    try {
-      console.log('[Register] Sending welcome email.')
-      await sendWelcomeEmail({ to: user.email, name: user.name })
-      console.log('[Register] Welcome email sent successfully.')
-    } catch (emailError) {
-      console.warn('[Register] Failed to send welcome email:', emailError?.message ?? emailError)
-    }
+    // Send welcome email asynchronously so it doesn't delay account creation response
+    console.log('[Register] Scheduling welcome email dispatch.')
+    sendWelcomeEmail({ to: user.email, name: user.name })
+      .then(() => console.log('[Register] Welcome email sent successfully.'))
+      .catch((emailError) => console.warn('[Register] Failed to send welcome email:', emailError?.message ?? emailError))
 
     return res.status(201).json({
       message: 'Account created successfully.',
@@ -130,8 +127,11 @@ router.post('/forgot-password', async (req, res) => {
     const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:5173'
     const resetUrl = `${frontendUrl}/reset-password?email=${encodeURIComponent(user.email)}&token=${encodeURIComponent(resetToken)}`
     
-    await sendPasswordResetEmail({ to: user.email, resetUrl })
-    console.log('[Forgot Password] Reset email sent successfully.')
+    // Send password reset email asynchronously so it doesn't block response
+    console.log('[Forgot Password] Scheduling reset email dispatch.')
+    sendPasswordResetEmail({ to: user.email, resetUrl })
+      .then(() => console.log('[Forgot Password] Reset email sent successfully.'))
+      .catch((emailError) => console.error('[Forgot Password] Error sending reset email:', emailError?.message ?? emailError))
 
     return res.json({ message: 'If the email exists, a reset link has been sent.' })
   } catch (error) {
