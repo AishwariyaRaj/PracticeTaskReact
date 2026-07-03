@@ -1,4 +1,4 @@
-# Highre Full-Stack Dashboard
+# NetPulse Full-Stack Dashboard
 
 An enterprise-grade, professional NOC (Network Operations Center) monitoring and management platform. This project features a full-stack architecture powered by React 19, Vite 8, Express 5, and Redis 5, incorporating telemetry graphing, interactive network switch inventory control, modular JWT authentication, automated mail flows (via Nodemailer), and a highly polished custom UI/UX design.
 
@@ -146,7 +146,7 @@ Open `.env` and fill in the values:
 | `SMTP_PORT` | Port number of your outgoing mail server | `587` |
 | `SMTP_USER` | SMTP credentials username | *Optional* |
 | `SMTP_PASS` | SMTP credentials password | *Optional* |
-| `EMAIL_FROM` | Sender display name & address | `Highre Dashboard <no-reply@highre.local>` |
+| `EMAIL_FROM` | Sender display name & address | `NetPulse Dashboard <no-reply@netpulse.local>` |
 | `ALERT_EMAIL_TO` | Target recipient for cluster notifications | *Optional (Falls back to auth operator)* |
 
 *Note: If no SMTP details are supplied in the `.env` file, Nodemailer automatically falls back to an output-logging `jsonTransport`, meaning emails will print directly to the server terminal console for easy local debugging.*
@@ -207,10 +207,10 @@ The included [vercel.json](vercel.json) keeps React Router routes working by rew
 
 ### Recommended URL Setup
 
-* Render backend URL example: `https://highre-backend.onrender.com`
-* Vercel frontend URL example: `https://highre-dashboard.vercel.app`
-* `VITE_API_URL` on Vercel: `https://highre-backend.onrender.com`
-* `CLIENT_ORIGIN` and `FRONTEND_URL` on Render: `https://highre-dashboard.vercel.app`
+* Render backend URL example: `https://netpulse-backend.onrender.com`
+* Vercel frontend URL example: `https://netpulse-dashboard.vercel.app`
+* `VITE_API_URL` on Vercel: `https://netpulse-backend.onrender.com`
+* `CLIENT_ORIGIN` and `FRONTEND_URL` on Render: `https://netpulse-dashboard.vercel.app`
 
 ---
 
@@ -224,7 +224,7 @@ Creates a new operator account and returns a session JWT token.
   ```json
   {
     "name": "Operator Name",
-    "email": "operator@highre.local",
+    "email": "operator@netpulse.local",
     "password": "strongpassword123"
   }
   ```
@@ -234,7 +234,7 @@ Authenticates credentials and issues a JWT token.
 * **Payload**:
   ```json
   {
-    "email": "operator@highre.local",
+    "email": "operator@netpulse.local",
     "password": "strongpassword123"
   }
   ```
@@ -244,7 +244,7 @@ Initiates password recovery email carrying a unique validation token.
 * **Payload**:
   ```json
   {
-    "email": "operator@highre.local"
+    "email": "operator@netpulse.local"
   }
   ```
 
@@ -253,7 +253,7 @@ Uses token code from email to change account password.
 * **Payload**:
   ```json
   {
-    "email": "operator@highre.local",
+    "email": "operator@netpulse.local",
     "token": "reset-uuid-token",
     "password": "newsecurepassword123"
   }
@@ -307,7 +307,7 @@ Deletes a switch from the repository.
   {
     "severity": "High",
     "message": "Simulated hardware fault in cluster node A.",
-    "recipientEmail": "ops-alerts@highre.local"
+    "recipientEmail": "ops-alerts@netpulse.local"
   }
   ```
 

@@ -2,8 +2,8 @@ export default function Footer() {
   return (
     <footer className="footer">
       <div className="container footer__wrapper">
-        <span>Highre dashboard</span>
-        <span>Redis-backed persistence</span>
+        <span>NetPulse Dashboard</span>
+        <span>Secure NOC monitoring platform</span>
       </div>
     </footer>
   )

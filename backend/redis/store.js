@@ -1,9 +1,9 @@
 import { createClient } from 'redis'
 import { randomUUID } from 'crypto'
 
-const USERS_KEY = 'highre:users'
-const SWITCHES_KEY = 'highre:switches'
-const CHART_KEY = 'highre:chart-data'
+const USERS_KEY = 'netpulse:users'
+const SWITCHES_KEY = 'netpulse:switches'
+const CHART_KEY = 'netpulse:chart-data'
 
 const initialSwitches = [
   {

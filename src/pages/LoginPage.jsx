@@ -18,11 +18,11 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
 
-  const from = location.state?.from?.pathname ?? '/'
+  const from = location.state?.from?.pathname ?? '/dashboard'
 
   useEffect(() => {
     if (isAuthenticated && !loading) {
-      navigate(from, { replace: true })
+      navigate(from === '/' ? '/dashboard' : from, { replace: true })
     }
   }, [from, isAuthenticated, loading, navigate])
 
@@ -33,7 +33,7 @@ export default function LoginPage() {
 
     try {
       await login(form)
-      navigate(from, { replace: true })
+      navigate(from === '/' ? '/dashboard' : from, { replace: true })
     } catch (loginError) {
       setError(loginError.response?.data?.message ?? 'Unable to sign in right now.')
     } finally {
@@ -60,7 +60,7 @@ export default function LoginPage() {
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="form-field">
             <label className="form-label">Email</label>
-            <input className="form-input" type="email" name="email" value={form.email} onChange={handleChange} placeholder="operator@highre.local" required />
+            <input className="form-input" type="email" name="email" value={form.email} onChange={handleChange} placeholder="operator@netpulse.local" required />
           </div>
           <div className="form-field">
             <label className="form-label">Password</label>

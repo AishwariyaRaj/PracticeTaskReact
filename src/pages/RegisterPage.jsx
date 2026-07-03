@@ -23,7 +23,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (isAuthenticated && !loading) {
-      navigate('/', { replace: true })
+      navigate('/dashboard', { replace: true })
     }
   }, [isAuthenticated, loading, navigate])
 
@@ -48,7 +48,7 @@ export default function RegisterPage() {
       const { confirmPassword, ...payload } = form
       await register(payload)
       setSuccess('Account created. You are now signed in.')
-      navigate('/', { replace: true })
+      navigate('/dashboard', { replace: true })
     } catch (registerError) {
       const serverMessage = registerError?.response?.data?.message
       const networkMessage = registerError?.message
@@ -76,7 +76,7 @@ export default function RegisterPage() {
           </div>
           <div className="form-field">
             <label className="form-label">Email</label>
-            <input className="form-input" type="email" name="email" value={form.email} onChange={handleChange} placeholder="alex@highre.local" required />
+            <input className="form-input" type="email" name="email" value={form.email} onChange={handleChange} placeholder="alex@netpulse.local" required />
           </div>
           <div className="form-field">
             <label className="form-label">Password</label>

@@ -3,9 +3,9 @@ import { LayoutDashboard, Network, BarChart3, LogOut, ChevronLeft, ChevronRight 
 import { useAuth } from '../context/AuthContext'
 
 const NAV = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/switches', label: 'Switch Mgmt', icon: Network },
-  { to: '/charts', label: 'Chart Analytics', icon: BarChart3 },
+  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/dashboard/switches', label: 'Switch Mgmt', icon: Network },
+  { to: '/dashboard/charts', label: 'Chart Analytics', icon: BarChart3 },
 ]
 
 export default function Sidebar({ isCollapsed, mobileOpen, onToggle, onCloseMobile }) {
@@ -16,10 +16,10 @@ export default function Sidebar({ isCollapsed, mobileOpen, onToggle, onCloseMobi
     <aside className={`noc-sidebar${isCollapsed ? ' collapsed' : ''}${mobileOpen ? ' mobile-open' : ''}`}>
       {/* Brand */}
       <div className="sidebar-brand">
-        <div className="sidebar-brand__mark">H</div>
+        <div className="sidebar-brand__mark">N</div>
         {!isCollapsed && (
           <div className="sidebar-brand__text">
-            <span className="sidebar-brand__name">Highre NOC</span>
+            <span className="sidebar-brand__name">NetPulse NOC</span>
             <span className="sidebar-brand__sub">Operations Center</span>
           </div>
         )}
@@ -31,7 +31,7 @@ export default function Sidebar({ isCollapsed, mobileOpen, onToggle, onCloseMobi
           <NavLink
             key={to}
             to={to}
-            end={to === '/'}
+              end={to === '/dashboard'}
             onClick={onCloseMobile}
             title={isCollapsed ? label : undefined}
             className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}

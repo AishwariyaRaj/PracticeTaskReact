@@ -2,8 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import * as authService from '../services/authService'
 
 const AuthContext = createContext(undefined)
-const USER_STORAGE_KEY = 'highre_user'
-const TOKEN_STORAGE_KEY = 'highre_token'
+const USER_STORAGE_KEY = 'netpulse_user'
+const TOKEN_STORAGE_KEY = 'netpulse_token'
 
 function readStoredAuth() {
   const storedUser = localStorage.getItem(USER_STORAGE_KEY)
@@ -61,8 +61,8 @@ export function AuthProvider({ children }) {
       setAuthState({ user: null, token: null, isAuthenticated: false })
     }
 
-    window.addEventListener('highre:auth-expired', handleExpiry)
-    return () => window.removeEventListener('highre:auth-expired', handleExpiry)
+    window.addEventListener('netpulse:auth-expired', handleExpiry)
+    return () => window.removeEventListener('netpulse:auth-expired', handleExpiry)
   }, [])
 
   const authenticate = useCallback(({ user, token }) => {

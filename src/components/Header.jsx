@@ -14,7 +14,7 @@ export default function Header({ breadcrumbs = [], onHamburger }) {
 
       {/* Breadcrumb */}
       <nav className="topbar-breadcrumb">
-        <Link to="/">Home</Link>
+        <Link to="/dashboard">Home</Link>
         {breadcrumbs.map((b, i) => (
           <span key={i}>
             <span style={{ margin: '0 4px', opacity: 0.4 }}>/</span>

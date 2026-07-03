@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: highre-backend
+    name: netpulse-backend
     env: node
     plan: starter
     buildCommand: npm install

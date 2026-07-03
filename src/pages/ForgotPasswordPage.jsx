@@ -37,7 +37,7 @@ export default function ForgotPasswordPage() {
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="form-field">
             <label className="form-label">Email</label>
-            <input className="form-input" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="operator@highre.local" required />
+            <input className="form-input" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="operator@netpulse.local" required />
           </div>
 
           {error ? <div className="form-alert form-alert--error">{error}</div> : null}

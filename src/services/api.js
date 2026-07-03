@@ -8,7 +8,7 @@ const api = axios.create({
 })
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('highre_token')
+  const token = localStorage.getItem('netpulse_token')
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
@@ -21,9 +21,9 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('highre_token')
-      localStorage.removeItem('highre_user')
-      window.dispatchEvent(new Event('highre:auth-expired'))
+      localStorage.removeItem('netpulse_token')
+      localStorage.removeItem('netpulse_user')
+      window.dispatchEvent(new Event('netpulse:auth-expired'))
     }
 
     return Promise.reject(error)

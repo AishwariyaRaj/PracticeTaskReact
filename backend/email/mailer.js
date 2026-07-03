@@ -24,7 +24,7 @@ function createTransporter() {
 }
 
 const transporter = createTransporter()
-const fromAddress = process.env.EMAIL_FROM ?? 'Highre Dashboard <no-reply@highre.local>'
+const fromAddress = process.env.EMAIL_FROM ?? 'NetPulse Dashboard <no-reply@netpulse.local>'
 
 async function sendEmail({ to, subject, html }) {
   return await transporter.sendMail({
@@ -38,7 +38,7 @@ async function sendEmail({ to, subject, html }) {
 export async function sendWelcomeEmail({ to, name }) {
   return await sendEmail({
     to,
-    subject: 'Welcome to the Highre dashboard',
+    subject: 'Welcome to the NetPulse dashboard',
     html: welcomeEmailTemplate(name),
   })
 }

@@ -4,9 +4,9 @@ import Header from './Header'
 import Sidebar from './Sidebar'
 
 const BREADCRUMB_MAP = {
-  '/': [],
-  '/switches': ['Switch Management'],
-  '/charts': ['Chart Analytics'],
+  '/dashboard': [],
+  '/dashboard/switches': ['Switch Management'],
+  '/dashboard/charts': ['Chart Analytics'],
 }
 
 export default function DashboardLayout() {

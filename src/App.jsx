@@ -4,6 +4,7 @@ import ChartDashboardPage from './pages/ChartDashboardPage'
 import DashboardPage from './pages/DashboardPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import LoginPage from './pages/LoginPage'
+import LandingPage from './pages/LandingPage'
 import NotFoundPage from './pages/NotFoundPage'
 import RegisterPage from './pages/RegisterPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
@@ -14,6 +15,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
@@ -21,9 +23,9 @@ export default function App() {
 
         <Route element={<ProtectedRoute />}>
           <Route element={<DashboardLayout />}>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/switches" element={<SwitchManagementPage />} />
-            <Route path="/charts" element={<ChartDashboardPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/dashboard/switches" element={<SwitchManagementPage />} />
+            <Route path="/dashboard/charts" element={<ChartDashboardPage />} />
           </Route>
         </Route>
 

@@ -3,7 +3,7 @@ function shell({ title, heading, body, accent = '#1d4ed8' }) {
     <div style="margin:0;padding:0;background:#f4f7fb;font-family:Arial,Helvetica,sans-serif;">
       <div style="max-width:640px;margin:0 auto;padding:32px 20px;">
         <div style="background:linear-gradient(135deg,#0f172a 0%,#111827 45%,#1d4ed8 100%);border-radius:20px;padding:32px;color:#fff;box-shadow:0 18px 50px rgba(15,23,42,.22);">
-          <div style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;opacity:.82;">Highre Network Operations</div>
+          <div style="font-size:12px;letter-spacing:.18em;text-transform:uppercase;opacity:.82;">NetPulse Network Operations</div>
           <h1 style="margin:16px 0 8px;font-size:28px;line-height:1.2;">${heading}</h1>
           <p style="margin:0 0 20px;color:rgba(255,255,255,.88);font-size:15px;line-height:1.7;">${body}</p>
           <div style="margin-top:28px;padding:18px 20px;border-radius:16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);">
@@ -12,7 +12,7 @@ function shell({ title, heading, body, accent = '#1d4ed8' }) {
           </div>
         </div>
         <div style="padding:18px 6px 0;color:#64748b;font-size:12px;line-height:1.6;">
-          This message was generated automatically by the Highre dashboard.
+          This message was generated automatically by the NetPulse dashboard.
         </div>
       </div>
     </div>
