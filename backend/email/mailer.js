@@ -28,6 +28,20 @@ function createTransporter() {
 const transporter = createTransporter()
 const fromAddress = process.env.EMAIL_FROM ?? 'NetPulse Dashboard <no-reply@netpulse.local>'
 
+// Verify connection configuration on startup
+if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+  transporter.verify((error, success) => {
+    if (error) {
+      console.error('[Mailer] SMTP Verification FAILED. Check credentials or port blocking:', error.message || error)
+      if (error.code === 'ETIMEDOUT' || error.command === 'CONN') {
+        console.error('[Mailer] Suggestion: Render often blocks outbound port 587. Try setting SMTP_PORT to 465 in your environment variables.')
+      }
+    } else {
+      console.log('[Mailer] SMTP Verification SUCCESS. Transporter is ready to deliver messages.')
+    }
+  })
+}
+
 async function sendEmail({ to, subject, html }) {
   return await transporter.sendMail({
     from: fromAddress,
