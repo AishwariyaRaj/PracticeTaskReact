@@ -13,6 +13,10 @@ export default function Footer() {
             <p className="footer__description">
               Next-generation Network Operations Center platform for telemetry monitoring, switch control, and automated alerting.
             </p>
+            <div className="footer__status-badge">
+              <span className="footer__status-dot"></span>
+              <span className="footer__status-text">All Systems Operational</span>
+            </div>
             <span className="footer__copyright">
               © {new Date().getFullYear()} NetPulse. All rights reserved.
             </span>
