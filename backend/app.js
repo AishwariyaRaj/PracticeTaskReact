@@ -36,33 +36,36 @@ export function createApp() {
 
   app.get('/debug-mailer', async (_req, res) => {
     const { transporter } = await import('./email/mailer.js')
-    try {
-      await new Promise((resolve, reject) => {
+    
+    let smtpReport = null
+    if (process.env.SMTP_HOST) {
+      smtpReport = await new Promise((resolve) => {
         transporter.verify((error, success) => {
-          if (error) reject(error)
-          else resolve(success)
+          if (error) {
+            resolve({ status: 'FAILED', error: error.message || error, code: error.code })
+          } else {
+            resolve({ status: 'SUCCESS' })
+          }
         })
       })
-      res.json({
-        smtp_configured: !!process.env.SMTP_HOST,
-        host: process.env.SMTP_HOST,
-        port: process.env.SMTP_PORT,
-        user: process.env.SMTP_USER,
-        status: 'SUCCESS',
-        message: 'SMTP is connected and verified.'
-      })
-    } catch (err) {
-      res.json({
-        smtp_configured: !!process.env.SMTP_HOST,
-        host: process.env.SMTP_HOST,
-        port: process.env.SMTP_PORT,
-        user: process.env.SMTP_USER,
-        status: 'FAILED',
-        error: err.message || err,
-        code: err.code,
-        syscall: err.syscall
-      })
+    } else {
+      smtpReport = { status: 'NOT_CONFIGURED' }
     }
+
+    res.json({
+      smtp: {
+        configured: !!process.env.SMTP_HOST,
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
+        user: process.env.SMTP_USER,
+        verification: smtpReport
+      },
+      resend: {
+        configured: !!process.env.RESEND_API_KEY,
+        from_address: process.env.EMAIL_FROM_HTTP || 'onboarding@resend.dev'
+      },
+      notice: "If SMTP is showing ETIMEDOUT, it means Render's firewall is blocking outbound SMTP ports. You can bypass this block entirely by signing up for a free Resend API key (https://resend.com) and adding the RESEND_API_KEY environment variable in your Render dashboard."
+    })
   })
 
   app.use(authRoutes)

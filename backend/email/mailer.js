@@ -46,6 +46,38 @@ if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
 }
 
 async function sendEmail({ to, subject, html }) {
+  if (process.env.RESEND_API_KEY) {
+    console.log(`[Mailer] Attempting dispatch to ${to} via Resend HTTP API.`)
+    try {
+      const fromAddr = process.env.EMAIL_FROM_HTTP || 'onboarding@resend.dev'
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: fromAddr,
+          to,
+          subject,
+          html,
+        }),
+      })
+
+      const data = await response.json()
+      if (!response.ok) {
+        throw new Error(data.message || JSON.stringify(data))
+      }
+      console.log(`[Mailer] Email sent successfully via Resend API. ID: ${data.id}`)
+      return data
+    } catch (err) {
+      console.error('[Mailer] Resend API dispatch failed:', err.message || err)
+      throw err
+    }
+  }
+
+  // Fallback to configured SMTP transporter
+  console.log(`[Mailer] Attempting dispatch to ${to} via SMTP Transporter.`)
   return await transporter.sendMail({
     from: fromAddress,
     to,
