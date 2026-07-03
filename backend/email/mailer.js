@@ -22,6 +22,9 @@ function createTransporter() {
       user,
       pass,
     },
+    connectionTimeout: 5000,
+    greetingTimeout: 5000,
+    socketTimeout: 5000
   })
 }
 
