@@ -42,6 +42,19 @@ const highlights = [
 export default function LandingPage() {
   return (
     <div className="landing-shell">
+      <header className="landing-header">
+        <div className="landing-header__wrapper">
+          <Link to="/" className="landing-header__brand">
+            <span className="landing-header__logo">N</span>
+            <span className="landing-header__name">NetPulse NOC</span>
+          </Link>
+          <nav className="landing-header__actions">
+            <Link to="/login" className="landing-header__link">Sign In</Link>
+            <Link to="/register" className="btn btn-primary landing-header__btn">Get Started</Link>
+          </nav>
+        </div>
+      </header>
+
       <section className="landing-hero">
         <div className="landing-hero__content">
           <span className="landing-badge">
