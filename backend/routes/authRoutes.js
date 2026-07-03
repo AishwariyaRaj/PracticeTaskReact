@@ -131,7 +131,10 @@ router.post('/forgot-password', async (req, res) => {
     console.log('[Forgot Password] Scheduling reset email dispatch.')
     sendPasswordResetEmail({ to: user.email, resetUrl })
       .then(() => console.log('[Forgot Password] Reset email sent successfully.'))
-      .catch((emailError) => console.error('[Forgot Password] Error sending reset email:', emailError?.message ?? emailError))
+      .catch((emailError) => {
+        console.error('[Forgot Password] Error sending reset email:', emailError?.message ?? emailError)
+        console.warn(`[Forgot Password] FALLBACK: Since the email failed to send, you can manually use this reset link for testing: ${resetUrl}`)
+      })
 
     return res.json({ message: 'If the email exists, a reset link has been sent.' })
   } catch (error) {

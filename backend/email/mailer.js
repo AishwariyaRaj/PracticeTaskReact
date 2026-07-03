@@ -46,6 +46,36 @@ if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
 }
 
 async function sendEmail({ to, subject, html }) {
+  if (process.env.SENDGRID_API_KEY) {
+    console.log(`[Mailer] Attempting dispatch to ${to} via SendGrid HTTP API.`)
+    try {
+      const fromAddr = process.env.EMAIL_FROM_HTTP || 'aishwariya229@gmail.com'
+      const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.SENDGRID_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          personalizations: [{ to: [{ email: to }] }],
+          from: { email: fromAddr, name: 'NetPulse Dashboard' },
+          subject,
+          content: [{ type: 'text/html', value: html }],
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.errors?.[0]?.message || `HTTP error ${response.status}`)
+      }
+      console.log(`[Mailer] Email sent successfully via SendGrid API.`)
+      return { success: true }
+    } catch (err) {
+      console.error('[Mailer] SendGrid API dispatch failed:', err.message || err)
+      throw err
+    }
+  }
+
   if (process.env.RESEND_API_KEY) {
     console.log(`[Mailer] Attempting dispatch to ${to} via Resend HTTP API.`)
     try {
@@ -72,6 +102,9 @@ async function sendEmail({ to, subject, html }) {
       return data
     } catch (err) {
       console.error('[Mailer] Resend API dispatch failed:', err.message || err)
+      if (fromAddr === 'onboarding@resend.dev') {
+        console.warn('[Mailer] TIP: When using the default onboarding@resend.dev address, Resend only allows sending to the email address that registered the Resend account. To send to other emails, you must add and verify a custom domain in the Resend dashboard.')
+      }
       throw err
     }
   }

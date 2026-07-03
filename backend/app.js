@@ -60,11 +60,15 @@ export function createApp() {
         user: process.env.SMTP_USER,
         verification: smtpReport
       },
+      sendgrid: {
+        configured: !!process.env.SENDGRID_API_KEY,
+        from_address: process.env.EMAIL_FROM_HTTP || 'aishwariya229@gmail.com'
+      },
       resend: {
         configured: !!process.env.RESEND_API_KEY,
         from_address: process.env.EMAIL_FROM_HTTP || 'onboarding@resend.dev'
       },
-      notice: "If SMTP is showing ETIMEDOUT, it means Render's firewall is blocking outbound SMTP ports. You can bypass this block entirely by signing up for a free Resend API key (https://resend.com) and adding the RESEND_API_KEY environment variable in your Render dashboard."
+      notice: "If SMTP is showing ETIMEDOUT, it means Render's firewall is blocking outbound SMTP ports. You can bypass this block entirely by signing up for a free SendGrid API key (https://sendgrid.com) or Resend API key (https://resend.com) and adding the corresponding environment variables in your Render dashboard."
     })
   })
 
