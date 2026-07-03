@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Activity, ArrowRight, CheckCircle, Mail, Network, ShieldCheck, Terminal, Heart } from 'lucide-react'
-import Footer from '../components/Footer'
+import Footer from '../Components/Footer'
 import { useAuth } from '../context/AuthContext'
 
 const features = [
