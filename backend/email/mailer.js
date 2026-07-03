@@ -25,7 +25,7 @@ function createTransporter() {
   })
 }
 
-const transporter = createTransporter()
+export const transporter = createTransporter()
 const fromAddress = process.env.EMAIL_FROM ?? 'NetPulse Dashboard <no-reply@netpulse.local>'
 
 // Verify connection configuration on startup
