@@ -33,9 +33,10 @@ An enterprise-grade, professional NOC (Network Operations Center) monitoring and
 * **🔒 Enterprise Security & Auth**: Full user authorization cycle including Secure Registration, JWT Login, and password recovery.
   * **Secure Sessions**: Token-based auth stored securely with client-side Axios request-interceptors.
   * **Auth Expiration**: Automatically clears invalid sessions and redirects users on HTTP `401 Unauthorized` responses.
-* **⚡ Simulated Cluster Alerts**: Simulates network emergencies. Triggers critical cluster alert dispatches via Nodemailer directly to operators' inboxes.
-* **💾 Hybrid Storage Engine**: Automatically utilizes a Redis cluster when available, dynamically falling back to an in-memory storage manager if Redis becomes unreachable.
-* **🎨 Dark/Light Optimized UI**: Customized design system using vanilla CSS variables, transitions, and micro-interactions.
+* **⚡ Non-Blocking Email Dispatch**: Welcome, password reset, and simulated cluster warning emails are handled asynchronously (fire-and-forget promise chains) so they never block the client UI.
+* **🚀 Resend HTTP API Fallback**: Supports Resend HTTPS API (`https://api.resend.com`) as a fallback to bypass SMTP port blocking (port 465/587) in hosted firewalled environments like Render Free Tier.
+* **💾 Hybrid Storage Engine**: Automatically utilizes a Redis database when configured, dynamically falling back to local storage if Redis is unreachable.
+* **🎨 Dark/Light NOC Interface**: Polished UI utilizing custom HSL color tokens, transitions, and micro-interactions, complete with a clean light-themed marketing landing page.
 
 ---
 
@@ -53,7 +54,8 @@ An enterprise-grade, professional NOC (Network Operations Center) monitoring and
 * **Server Framework**: Express 5 (Asynchronous routing support)
 * **Caching & Database**: Redis 5 (Node-Redis client)
 * **Authentication**: JSON Web Tokens (JWT) & Bcrypt.js (Password hashing)
-* **Email System**: Nodemailer (SMTP transports & HTML templating)
+* **Email System**: Nodemailer (SMTP transports & HTML templating) & Resend HTTPS REST API fallback
+
 
 ---
 
@@ -142,14 +144,16 @@ Open `.env` and fill in the values:
 | `VITE_API_URL` | Frontend connection URL to backend API | `http://localhost:5000` |
 | `JWT_SECRET` | Secret key for encoding token payloads | `replace-with-a-long-random-secret` |
 | `REDIS_URL` | Connection URL for Redis instances | `redis://127.0.0.1:6379` |
-| `SMTP_HOST` | Host address of your outgoing mail server | *Optional (Falls back to JSON log mode)* |
+| `SMTP_HOST` | Host address of your outgoing mail server | *Optional* |
 | `SMTP_PORT` | Port number of your outgoing mail server | `587` |
 | `SMTP_USER` | SMTP credentials username | *Optional* |
 | `SMTP_PASS` | SMTP credentials password | *Optional* |
-| `EMAIL_FROM` | Sender display name & address | `NetPulse Dashboard <no-reply@netpulse.local>` |
+| `EMAIL_FROM` | Sender display name & address for SMTP | `NetPulse Dashboard <no-reply@netpulse.local>` |
 | `ALERT_EMAIL_TO` | Target recipient for cluster notifications | *Optional (Falls back to auth operator)* |
+| `RESEND_API_KEY` | Resend API token for bypassing blocked SMTP ports | *Optional (Bypasses SMTP if present)* |
+| `EMAIL_FROM_HTTP` | Sender email address for Resend HTTP calls | `onboarding@resend.dev` |
 
-*Note: If no SMTP details are supplied in the `.env` file, Nodemailer automatically falls back to an output-logging `jsonTransport`, meaning emails will print directly to the server terminal console for easy local debugging.*
+*Note: If no SMTP details or RESEND_API_KEY are supplied, the mailer automatically falls back to an output-logging `jsonTransport`, meaning emails will print directly to the server terminal console for easy local debugging.*
 
 ### Running the Application
 
@@ -301,7 +305,7 @@ Deletes a switch from the repository.
 *(Requires Auth)* Retrieves the hourly network statistics dataset for the last 24 hours.
 
 #### `POST /cluster-alert`
-*(Requires Auth)* Sends a critical cluster warning email template immediately via Nodemailer SMTP.
+*(Requires Auth)* Sends a critical cluster warning email template immediately via Nodemailer SMTP or Resend API.
 * **Payload**:
   ```json
   {
@@ -311,6 +315,9 @@ Deletes a switch from the repository.
   }
   ```
 
+#### `GET /debug-mailer`
+*(Public)* Performs dynamic diagnostics on the SMTP transporter verification state and details the status of any Resend HTTP API configurations. Returns precise socket error reports (e.g. `ETIMEDOUT`) to identify network restrictions.
+
 ---
 
 ## 🎨 Design System & UI
@@ -318,7 +325,8 @@ Deletes a switch from the repository.
 The platform uses a custom corporate design system based around **NOC (Network Operations Center)** themes:
 * **Glassmorphic Elements**: Modern cards (`.noc-card`) featuring clean borders, high-contrast spacing, and custom grid systems.
 * **Adaptive Status Badges**: Unified pill badges representing active/maintenance/inactive statuses with corresponding tones.
-* **Responsive Layouts**: Flexible sidebar and main dashboard columns that transition seamlessly to drawer menus on smaller displays.
+* **Light-Themed Landing Page**: A fully responsive landing page utilizing a clean white and light blue-grey design (`#edf2f9`) with soft gradients and radial glow patterns, matching the dashboard's light theme. Features a terminal simulation deck showcasing network logs.
+* **4-Column Corporate Footer**: An enterprise footer structure featuring organized columns for Platform services, developer Resources, and legal Compliance links.
 * **Micro-Animations**: Hover animations on clickable elements, cards, and list rows to provide instant visual feedback.
 
 ---
