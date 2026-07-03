@@ -8,6 +8,7 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { fetchChartData } from '../services/chartService'
 import { fetchSwitches } from '../services/switchService'
 import { sendClusterAlert } from '../services/alertService'
+import { addNotification } from '../utils/notifications'
 
 export default function DashboardPage() {
   useDocumentTitle('Dashboard')
@@ -45,6 +46,7 @@ export default function DashboardPage() {
       await sendClusterAlert({ recipientEmail: user?.email, severity: 'High', message: 'Simulated cluster issue.' })
       setAlertState('sent')
       toast.success('Alert sent', 'Cluster alert email dispatched successfully.')
+      addNotification('Cluster Alert Simulated', `High severity alert dispatched to ${user?.email}`)
     } catch {
       setAlertState('failed')
       toast.error('Alert failed', 'Unable to send the cluster alert right now.')
