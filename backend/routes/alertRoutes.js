@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { sendClusterAlertEmail } from '../email/mailer.js'
 import { requireAuth } from '../middleware/auth.js'
+import { addNotification } from '../redis/store.js'
 
 const router = Router()
 
@@ -12,6 +13,13 @@ router.post('/cluster-alert', requireAuth, async (req, res) => {
     if (!targetEmail) {
       return res.status(400).json({ message: 'A recipient email address is required.' })
     }
+
+    // Add persistent notification in backend store
+    await addNotification(
+      req.user.id,
+      'Cluster Alert Simulated',
+      `${severity} severity alert dispatched to ${targetEmail}`
+    )
 
     // Send cluster alert email asynchronously so it doesn't block response
     console.log('[Alert] Scheduling cluster alert email dispatch.')

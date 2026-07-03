@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { addSwitch, deleteSwitch, getSwitches, updateSwitch } from '../redis/store.js'
+import { addSwitch, deleteSwitch, getSwitches, updateSwitch, addNotification } from '../redis/store.js'
 
 const router = Router()
 
@@ -21,6 +21,14 @@ router.post('/switches', async (req, res) => {
     }
 
     const created = await addSwitch({ model, physicalDevice, id, config, status }, req.user.id)
+    
+    // Add database notification
+    await addNotification(
+      req.user.id,
+      'Switch Registered',
+      `Switch ${created.id} (${created.model}) was added to inventory.`
+    )
+
     return res.status(201).json({ message: 'Switch created successfully.', item: created })
   } catch (error) {
     return res.status(400).json({ message: error.message || 'Unable to create switch.' })
@@ -35,6 +43,13 @@ router.put('/switches/:id', async (req, res) => {
       return res.status(404).json({ message: 'Switch not found.' })
     }
 
+    // Add database notification
+    await addNotification(
+      req.user.id,
+      'Switch Updated',
+      `Switch ${req.params.id} (${updated.model}) details were modified.`
+    )
+
     return res.json({ message: 'Switch updated successfully.', item: updated })
   } catch (error) {
     return res.status(500).json({ message: 'Unable to update switch.' })
@@ -48,6 +63,13 @@ router.delete('/switches/:id', async (req, res) => {
     if (!removed) {
       return res.status(404).json({ message: 'Switch not found.' })
     }
+
+    // Add database notification
+    await addNotification(
+      req.user.id,
+      'Switch Deleted',
+      `Switch ${req.params.id} was removed from inventory.`
+    )
 
     return res.json({ message: 'Switch deleted successfully.' })
   } catch (error) {

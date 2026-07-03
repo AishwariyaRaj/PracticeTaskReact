@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto'
 const USERS_KEY = 'netpulse:users'
 const SWITCHES_KEY = 'netpulse:switches'
 const CHART_KEY = 'netpulse:chart-data'
+const NOTIFICATIONS_KEY = 'netpulse:notifications'
 
 const initialSwitches = [
   {
@@ -50,10 +51,28 @@ const initialChartData = Array.from({ length: 24 }, (_, index) => {
   }
 })
 
+const initialNotifications = [
+  {
+    id: '1',
+    title: 'Welcome Onboard',
+    message: 'Your NetPulse Operator account has been initialized.',
+    time: new Date().toISOString(),
+    read: false,
+  },
+  {
+    id: '2',
+    title: 'Database Connected',
+    message: 'Successfully connected to Redis database cluster.',
+    time: new Date(Date.now() - 60 * 1000 * 2).toISOString(),
+    read: true,
+  },
+]
+
 const memoryStore = {
   users: new Map(),
   switches: [...initialSwitches],
   chartData: [...initialChartData],
+  notifications: [...initialNotifications],
 }
 
 let client = null
@@ -158,6 +177,45 @@ async function writeChartData(chartData) {
   return await writeJsonKey(CHART_KEY, chartData)
 }
 
+async function readNotifications(userId) {
+  const key = userId ? `${NOTIFICATIONS_KEY}:${userId}` : NOTIFICATIONS_KEY
+  if (!connected || !client) {
+    if (userId) {
+      if (!memoryStore.userNotifications) {
+        memoryStore.userNotifications = new Map()
+      }
+      if (!memoryStore.userNotifications.has(userId)) {
+        memoryStore.userNotifications.set(userId, clone(initialNotifications))
+      }
+      return clone(memoryStore.userNotifications.get(userId))
+    }
+    return clone(memoryStore.notifications)
+  }
+
+  const raw = await client.get(key)
+  if (!raw) {
+    await writeJsonKey(key, initialNotifications)
+    return clone(initialNotifications)
+  }
+  return JSON.parse(raw)
+}
+
+async function writeNotifications(notifications, userId) {
+  const key = userId ? `${NOTIFICATIONS_KEY}:${userId}` : NOTIFICATIONS_KEY
+  if (!connected || !client) {
+    if (userId) {
+      if (!memoryStore.userNotifications) {
+        memoryStore.userNotifications = new Map()
+      }
+      memoryStore.userNotifications.set(userId, clone(notifications))
+    } else {
+      memoryStore.notifications = clone(notifications)
+    }
+    return notifications
+  }
+  return await writeJsonKey(key, notifications)
+}
+
 async function seedIfNeeded() {
   const switches = await readSwitches()
   if (!switches || switches.length === 0) {
@@ -167,6 +225,11 @@ async function seedIfNeeded() {
   const chartData = await readChartData()
   if (!chartData || chartData.length === 0) {
     await writeChartData(initialChartData)
+  }
+
+  const notifications = await readNotifications()
+  if (!notifications || notifications.length === 0) {
+    await writeNotifications(initialNotifications)
   }
 }
 
@@ -305,4 +368,38 @@ export async function getChartData() {
 export async function setChartData(chartData) {
   await initializeStore()
   return await writeChartData(chartData)
+}
+
+export async function getNotifications(userId) {
+  await initializeStore()
+  return await readNotifications(userId)
+}
+
+export async function addNotification(userId, title, message) {
+  await initializeStore()
+  const list = await readNotifications(userId)
+  const newNotif = {
+    id: String(Date.now() + Math.random()),
+    title,
+    message,
+    time: new Date().toISOString(),
+    read: false,
+  }
+  list.unshift(newNotif)
+  await writeNotifications(list, userId)
+  return newNotif
+}
+
+export async function markAllNotificationsRead(userId) {
+  await initializeStore()
+  const list = await readNotifications(userId)
+  const updated = list.map((item) => ({ ...item, read: true }))
+  await writeNotifications(updated, userId)
+  return updated
+}
+
+export async function clearNotifications(userId) {
+  await initializeStore()
+  await writeNotifications([], userId)
+  return []
 }

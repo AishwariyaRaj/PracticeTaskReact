@@ -4,6 +4,7 @@ import authRoutes from './routes/authRoutes.js'
 import switchRoutes from './routes/switchRoutes.js'
 import chartRoutes from './routes/chartRoutes.js'
 import alertRoutes from './routes/alertRoutes.js'
+import notificationRoutes from './routes/notificationRoutes.js'
 import { requireAuth } from './middleware/auth.js'
 
 export function createApp() {
@@ -77,6 +78,7 @@ export function createApp() {
   app.use(switchRoutes)
   app.use(chartRoutes)
   app.use(alertRoutes)
+  app.use(notificationRoutes)
 
   app.use((error, _req, res, _next) => {
     console.error(error)

@@ -31,16 +31,24 @@ export default function Header({ breadcrumbs = [], onHamburger }) {
   const initials = user?.name?.charAt(0)?.toUpperCase() ?? 'U'
 
   const loadNotifications = () => {
-    setNotifications(getNotifications())
+    getNotifications().then((items) => {
+      setNotifications(items || [])
+    }).catch(() => {})
   }
 
   useEffect(() => {
     loadNotifications()
+    
+    // Poll the backend for live notifications every 5 seconds
+    const pollInterval = setInterval(loadNotifications, 5000)
+
     const handleNewNotification = () => {
       loadNotifications()
     }
     window.addEventListener('netpulse-new-notification', handleNewNotification)
+    
     return () => {
+      clearInterval(pollInterval)
       window.removeEventListener('netpulse-new-notification', handleNewNotification)
     }
   }, [])
