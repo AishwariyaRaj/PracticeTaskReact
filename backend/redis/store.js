@@ -110,13 +110,43 @@ async function writeUsers(users) {
   return users
 }
 
-async function readSwitches() {
-  return await readJsonKey(SWITCHES_KEY, clone(memoryStore.switches))
+async function readSwitches(userId) {
+  const key = userId ? `${SWITCHES_KEY}:${userId}` : SWITCHES_KEY
+  if (!connected || !client) {
+    if (userId) {
+      if (!memoryStore.userSwitches) {
+        memoryStore.userSwitches = new Map()
+      }
+      if (!memoryStore.userSwitches.has(userId)) {
+        memoryStore.userSwitches.set(userId, clone(initialSwitches))
+      }
+      return clone(memoryStore.userSwitches.get(userId))
+    }
+    return clone(memoryStore.switches)
+  }
+
+  const raw = await client.get(key)
+  if (!raw) {
+    await writeJsonKey(key, initialSwitches)
+    return clone(initialSwitches)
+  }
+  return JSON.parse(raw)
 }
 
-async function writeSwitches(switches) {
-  memoryStore.switches = clone(switches)
-  return await writeJsonKey(SWITCHES_KEY, switches)
+async function writeSwitches(switches, userId) {
+  const key = userId ? `${SWITCHES_KEY}:${userId}` : SWITCHES_KEY
+  if (!connected || !client) {
+    if (userId) {
+      if (!memoryStore.userSwitches) {
+        memoryStore.userSwitches = new Map()
+      }
+      memoryStore.userSwitches.set(userId, clone(switches))
+    } else {
+      memoryStore.switches = clone(switches)
+    }
+    return switches
+  }
+  return await writeJsonKey(key, switches)
 }
 
 async function readChartData() {
@@ -213,13 +243,13 @@ export async function updateUserByEmail(email, updater) {
   return clone(nextUser)
 }
 
-export async function getSwitches() {
+export async function getSwitches(userId) {
   await initializeStore()
-  return await readSwitches()
+  return await readSwitches(userId)
 }
 
-export async function addSwitch(switchRecord) {
-  const switches = await getSwitches()
+export async function addSwitch(switchRecord, userId) {
+  const switches = await getSwitches(userId)
   const nextSwitch = {
     id: switchRecord.id?.trim() || `SW-${randomUUID().slice(0, 8).toUpperCase()}`,
     model: switchRecord.model.trim(),
@@ -233,12 +263,12 @@ export async function addSwitch(switchRecord) {
   }
 
   switches.unshift(nextSwitch)
-  await writeSwitches(switches)
+  await writeSwitches(switches, userId)
   return nextSwitch
 }
 
-export async function updateSwitch(id, updates) {
-  const switches = await getSwitches()
+export async function updateSwitch(id, updates, userId) {
+  const switches = await getSwitches(userId)
   const index = switches.findIndex((entry) => entry.id.toLowerCase() === id.toLowerCase())
 
   if (index === -1) {
@@ -251,19 +281,19 @@ export async function updateSwitch(id, updates) {
     id: switches[index].id,
   }
 
-  await writeSwitches(switches)
+  await writeSwitches(switches, userId)
   return switches[index]
 }
 
-export async function deleteSwitch(id) {
-  const switches = await getSwitches()
+export async function deleteSwitch(id, userId) {
+  const switches = await getSwitches(userId)
   const nextSwitches = switches.filter((entry) => entry.id.toLowerCase() !== id.toLowerCase())
 
   if (nextSwitches.length === switches.length) {
     return false
   }
 
-  await writeSwitches(nextSwitches)
+  await writeSwitches(nextSwitches, userId)
   return true
 }
 
