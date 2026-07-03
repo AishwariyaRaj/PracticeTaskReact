@@ -9,9 +9,11 @@ function createTransporter() {
   const pass = process.env.SMTP_PASS
 
   if (!host || !user || !pass) {
+    console.warn('[Mailer] WARNING: Missing SMTP env credentials. Falling back to jsonTransport (mock mode). Emails will only log to console and won\'t be delivered to real inboxes.')
     return nodemailer.createTransport({ jsonTransport: true })
   }
 
+  console.log(`[Mailer] Success: Initializing real SMTP Transport on ${host}:${port} for account ${user}`)
   return nodemailer.createTransport({
     host,
     port,
