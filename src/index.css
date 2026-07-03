@@ -2,58 +2,135 @@
 
 /* ── Design Tokens ──────────────────────────────────────────── */
 :root {
+  --sidebar-width:  240px;
+  --sidebar-collapsed: 64px;
+  --topbar-height:  64px;
+  --radius:         16px;
+  --radius-sm:      12px;
+  --radius-xs:      8px;
+  --transition:     300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --font-display:   'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --font-sans:      'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Light Theme Variables */
+:root, html[data-theme='light'] {
   color-scheme: light;
 
   /* Brand */
   --primary:        #2563EB;
   --primary-hover:  #1D4ED8;
-  --primary-light:  rgba(37, 99, 235, 0.08);
+  --primary-light:  rgba(37, 99, 235, 0.06);
 
   /* Semantic */
   --success:        #10B981;
-  --success-light:  rgba(16, 185, 129, 0.1);
+  --success-light:  rgba(16, 185, 129, 0.08);
   --warning:        #F59E0B;
-  --warning-light:  rgba(245, 158, 11, 0.1);
+  --warning-light:  rgba(245, 158, 11, 0.08);
   --danger:         #EF4444;
   --danger-hover:   #DC2626;
-  --danger-light:   rgba(239, 68, 68, 0.1);
+  --danger-light:   rgba(239, 68, 68, 0.08);
   --info:           #6366F1;
-  --info-light:     rgba(99, 102, 241, 0.1);
+  --info-light:     rgba(99, 102, 241, 0.08);
 
   /* Surfaces */
   --bg:             #F8FAFC;
   --bg-soft:        #F1F5F9;
+  --bg-input:       #FFFFFF;
   --card:           #FFFFFF;
   --sidebar-bg:     #FFFFFF;
-  --sidebar-hover:  var(--bg-soft);
-  --sidebar-active: var(--primary-light);
+  --sidebar-hover:  #F8FAFC;
+  --sidebar-active: rgba(37, 99, 235, 0.06);
 
   /* Text */
   --text:           #0F172A;
-  --text-secondary: #475569;
-  --text-muted:     #94A3B8;
-  --text-sidebar:   var(--text-secondary);
-  --text-sidebar-active: var(--primary);
+  --text-secondary: #334155;
+  --text-muted:     #64748B;
+  --text-sidebar:   #475569;
+  --text-sidebar-active: #2563EB;
 
   /* Borders */
   --border:         #E2E8F0;
   --border-strong:  #CBD5E1;
 
-  /* Shadows */
-  --shadow-sm:      0 1px 3px rgba(15,23,42,0.08), 0 1px 2px rgba(15,23,42,0.04);
-  --shadow-md:      0 4px 12px rgba(15,23,42,0.08), 0 2px 4px rgba(15,23,42,0.04);
-  --shadow-lg:      0 10px 30px rgba(15,23,42,0.1), 0 4px 8px rgba(15,23,42,0.05);
-  --shadow-xl:      0 20px 50px rgba(15,23,42,0.12);
+  /* Shadows (Enhanced with luminous primary undertone for premium light depth) */
+  --shadow-sm:      0 1px 3px rgba(15,23,42,0.02), 0 1px 2px rgba(15,23,42,0.01);
+  --shadow-md:      0 8px 24px rgba(37, 99, 235, 0.04), 0 2px 6px rgba(15,23,42,0.01);
+  --shadow-lg:      0 16px 36px rgba(37, 99, 235, 0.06), 0 4px 12px rgba(15,23,42,0.02);
+  --shadow-xl:      0 24px 60px rgba(37, 99, 235, 0.09);
+  
+  /* Blurs & Backdrops */
+  --glass-bg:       rgba(255, 255, 255, 0.75);
+  --glass-border:   rgba(226, 232, 240, 0.7);
+  --glow-opacity:   0.05;
 
-  /* Layout */
-  --sidebar-width:  240px;
-  --sidebar-collapsed: 64px;
-  --topbar-height:  64px;
-  --radius:         16px;
-  --radius-sm:      10px;
-  --radius-xs:      8px;
-  --transition:     300ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* Tech Canvas Grid Background */
+  --bg-grid: radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.04) 0%, transparent 60%),
+             radial-gradient(circle at 10% 80%, rgba(99, 102, 241, 0.03) 0%, transparent 60%),
+             linear-gradient(to right, rgba(226, 232, 240, 0.35) 1px, transparent 1px),
+             linear-gradient(to bottom, rgba(226, 232, 240, 0.35) 1px, transparent 1px);
+  --bg-grid-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px;
 }
+
+/* Dark Theme Variables */
+html[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Brand */
+  --primary:        #3B82F6;
+  --primary-hover:  #60A5FA;
+  --primary-light:  rgba(59, 130, 246, 0.15);
+
+  /* Semantic */
+  --success:        #10B981;
+  --success-light:  rgba(16, 185, 129, 0.12);
+  --warning:        #F59E0B;
+  --warning-light:  rgba(245, 158, 11, 0.12);
+  --danger:         #EF4444;
+  --danger-hover:   #F87171;
+  --danger-light:   rgba(239, 68, 68, 0.12);
+  --info:           #6366F1;
+  --info-light:     rgba(99, 102, 241, 0.12);
+
+  /* Surfaces */
+  --bg:             #06080F;
+  --bg-soft:        #0E131F;
+  --bg-input:       #0A0D16;
+  --card:           #0E131F;
+  --sidebar-bg:     #080B13;
+  --sidebar-hover:  #181F30;
+  --sidebar-active: rgba(59, 130, 246, 0.15);
+
+  /* Text */
+  --text:           #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --text-muted:     #64748B;
+  --text-sidebar:   #94A3B8;
+  --text-sidebar-active: #60A5FA;
+
+  /* Borders */
+  --border:         #181F30;
+  --border-strong:  #2D3748;
+
+  /* Shadows */
+  --shadow-sm:      0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md:      0 4px 12px rgba(0,0,0,0.4);
+  --shadow-lg:      0 10px 30px rgba(0,0,0,0.45);
+  --shadow-xl:      0 20px 50px rgba(0,0,0,0.55);
+
+  /* Blurs & Backdrops */
+  --glass-bg:       rgba(14, 19, 31, 0.75);
+  --glass-border:   rgba(24, 31, 48, 0.8);
+  --glow-opacity:   0.2;
+
+  /* Tech Canvas Grid Background */
+  --bg-grid: radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 75%),
+             radial-gradient(circle at 10% 80%, rgba(16, 185, 129, 0.04) 0%, transparent 60%),
+             linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+             linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  --bg-grid-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px;
+}
+
 
 /* ── Reset ──────────────────────────────────────────────────── */
 *, *::before, *::after {

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
-import { Search, Bell, Menu } from 'lucide-react'
+import { Search, Bell, Menu, Sun, Moon } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import { useTheme } from '../context/ThemeContext'
 import { Link } from 'react-router-dom'
 import { getNotifications, markAllAsRead, clearNotifications } from '../utils/notifications'
 
@@ -21,6 +22,7 @@ function formatTime(isoString) {
 
 export default function Header({ breadcrumbs = [], onHamburger }) {
   const { user, logout } = useAuth()
+  const { theme, toggleTheme } = useTheme()
   const [notifications, setNotifications] = useState([])
   const [showNotifications, setShowNotifications] = useState(false)
   const [showProfile, setShowProfile] = useState(false)
@@ -108,9 +110,20 @@ export default function Header({ breadcrumbs = [], onHamburger }) {
 
       {/* Actions */}
       <div className="topbar-actions">
+        {/* Theme Toggle */}
+        <button
+          className="topbar-theme-toggle"
+          onClick={toggleTheme}
+          aria-label="Toggle Theme"
+          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+        >
+          {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+        </button>
+
         {/* Notifications */}
         <div className="topbar-bell-wrapper" ref={bellRef}>
           <button className="topbar-bell" onClick={toggleNotifications} aria-label="Notifications">
+
             <Bell size={17} />
             {unreadCount > 0 && <span className="topbar-bell__badge" />}
           </button>

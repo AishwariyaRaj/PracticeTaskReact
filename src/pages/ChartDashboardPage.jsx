@@ -4,6 +4,7 @@ import 'chartjs-adapter-date-fns'
 import { Line } from 'react-chartjs-2'
 import { Download } from 'lucide-react'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
+import { useTheme } from '../context/ThemeContext'
 import { fetchChartData } from '../services/chartService'
 import { formatDateTime } from '../utils/formatters'
 
@@ -11,6 +12,7 @@ ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, TimeScal
 
 export default function ChartDashboardPage() {
   useDocumentTitle('Chart Analytics')
+  const { theme } = useTheme()
   const chartRef = useRef(null)
   const [chartData, setChartData] = useState([])
   const [selectedPoint, setSelectedPoint] = useState(null)
@@ -26,27 +28,101 @@ export default function ChartDashboardPage() {
     return () => { mounted = false }
   }, [])
 
-  const datasets = useMemo(() => ({
-    labels: chartData.map(d => d.timestamp),
-    datasets: [
-      { label: 'Min', data: chartData.map(d => ({ x: d.timestamp, y: d.min })), borderColor: '#2563EB', backgroundColor: 'rgba(37,99,235,0.06)', fill: true, tension: 0.4, borderWidth: 2.5, pointRadius: 3, pointHoverRadius: 6, pointBackgroundColor: '#fff', pointBorderWidth: 2 },
-      { label: 'Median', data: chartData.map(d => ({ x: d.timestamp, y: d.median })), borderColor: '#10B981', backgroundColor: 'rgba(16,185,129,0.04)', tension: 0.4, borderWidth: 2.5, pointRadius: 3, pointHoverRadius: 6, pointBackgroundColor: '#fff', pointBorderWidth: 2 },
-      { label: 'Max', data: chartData.map(d => ({ x: d.timestamp, y: d.max })), borderColor: '#F59E0B', backgroundColor: 'rgba(245,158,11,0.04)', tension: 0.4, borderWidth: 2.5, pointRadius: 3, pointHoverRadius: 6, pointBackgroundColor: '#fff', pointBorderWidth: 2 },
-    ],
-  }), [chartData])
+  const datasets = useMemo(() => {
+    const isDark = theme === 'dark'
+    return {
+      labels: chartData.map(d => d.timestamp),
+      datasets: [
+        {
+          label: 'Min',
+          data: chartData.map(d => ({ x: d.timestamp, y: d.min })),
+          borderColor: isDark ? '#3B82F6' : '#2563EB',
+          backgroundColor: isDark ? 'rgba(59,130,246,0.12)' : 'rgba(37,99,235,0.06)',
+          fill: true,
+          tension: 0.4,
+          borderWidth: 2.5,
+          pointRadius: 3,
+          pointHoverRadius: 6,
+          pointBackgroundColor: isDark ? '#0E131F' : '#fff',
+          pointBorderWidth: 2,
+        },
+        {
+          label: 'Median',
+          data: chartData.map(d => ({ x: d.timestamp, y: d.median })),
+          borderColor: '#10B981',
+          backgroundColor: isDark ? 'rgba(16,185,129,0.08)' : 'rgba(16,185,129,0.04)',
+          tension: 0.4,
+          borderWidth: 2.5,
+          pointRadius: 3,
+          pointHoverRadius: 6,
+          pointBackgroundColor: isDark ? '#0E131F' : '#fff',
+          pointBorderWidth: 2,
+        },
+        {
+          label: 'Max',
+          data: chartData.map(d => ({ x: d.timestamp, y: d.max })),
+          borderColor: '#F59E0B',
+          backgroundColor: isDark ? 'rgba(245,158,11,0.08)' : 'rgba(245,158,11,0.04)',
+          tension: 0.4,
+          borderWidth: 2.5,
+          pointRadius: 3,
+          pointHoverRadius: 6,
+          pointBackgroundColor: isDark ? '#0E131F' : '#fff',
+          pointBorderWidth: 2,
+        },
+      ],
+    }
+  }, [chartData, theme])
 
-  const options = useMemo(() => ({
-    responsive: true, maintainAspectRatio: false,
-    interaction: { mode: 'index', intersect: false },
-    plugins: {
-      legend: { position: 'top', labels: { color: '#475569', font: { family: "'Inter',sans-serif", size: 13, weight: '600' }, padding: 20, usePointStyle: true, pointStyle: 'circle' } },
-      tooltip: { backgroundColor: '#fff', titleColor: '#0F172A', bodyColor: '#475569', borderColor: '#E2E8F0', borderWidth: 1, padding: 12, boxPadding: 6, usePointStyle: true, callbacks: { title: items => items.length ? formatDateTime(items[0].parsed.x) : '' } },
-    },
-    scales: {
-      x: { type: 'time', time: { unit: 'hour', displayFormats: { hour: 'h a' } }, grid: { color: '#F1F5F9', drawTicks: false }, ticks: { color: '#94A3B8', font: { family: "'Inter',sans-serif", size: 11 }, padding: 8 } },
-      y: { grid: { color: '#F1F5F9', drawTicks: false }, ticks: { color: '#94A3B8', font: { family: "'Inter',sans-serif", size: 11 }, padding: 8 } },
-    },
-  }), [])
+  const options = useMemo(() => {
+    const isDark = theme === 'dark'
+    const gridColor = isDark ? '#1E293B' : '#F1F5F9'
+    const textColor = isDark ? '#94A3B8' : '#64748b'
+    const tooltipBg = isDark ? '#0E131F' : '#fff'
+    const tooltipTextColor = isDark ? '#F8FAFC' : '#0F172A'
+    const tooltipBorderColor = isDark ? '#2D3748' : '#E2E8F0'
+
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: {
+            color: isDark ? '#CBD5E1' : '#475569',
+            font: { family: "'Inter',sans-serif", size: 13, weight: '600' },
+            padding: 20,
+            usePointStyle: true,
+            pointStyle: 'circle',
+          },
+        },
+        tooltip: {
+          backgroundColor: tooltipBg,
+          titleColor: tooltipTextColor,
+          bodyColor: isDark ? '#CBD5E1' : '#475569',
+          borderColor: tooltipBorderColor,
+          borderWidth: 1,
+          padding: 12,
+          boxPadding: 6,
+          usePointStyle: true,
+          callbacks: { title: items => (items.length ? formatDateTime(items[0].parsed.x) : '') },
+        },
+      },
+      scales: {
+        x: {
+          type: 'time',
+          time: { unit: 'hour', displayFormats: { hour: 'h a' } },
+          grid: { color: gridColor, drawTicks: false },
+          ticks: { color: textColor, font: { family: "'Inter',sans-serif", size: 11 }, padding: 8 },
+        },
+        y: {
+          grid: { color: gridColor, drawTicks: false },
+          ticks: { color: textColor, font: { family: "'Inter',sans-serif", size: 11 }, padding: 8 },
+        },
+      },
+    }
+  }, [theme])
 
   const handleDoubleClick = useCallback(event => {
     const chart = chartRef.current
