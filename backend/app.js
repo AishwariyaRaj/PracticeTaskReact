@@ -12,18 +12,25 @@ export function createApp() {
 
   const allowedOrigins = [
     process.env.CLIENT_ORIGIN,
+    process.env.FRONTEND_URL,
     'http://localhost:5173',
     'http://localhost:5174',
     'http://localhost:5175',
-  ].filter(Boolean)
+  ]
+    .filter(Boolean)
+    .map((url) => url.replace(/\/$/, ''))
 
   app.use(
     cors({
       origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin) || origin.startsWith('http://localhost:')) {
+        if (!origin) {
+          return callback(null, true)
+        }
+        const cleanOrigin = origin.replace(/\/$/, '')
+        if (allowedOrigins.includes(cleanOrigin) || cleanOrigin.startsWith('http://localhost:')) {
           callback(null, true)
         } else {
-          callback(new Error('Not allowed by CORS'))
+          callback(new Error(`Not allowed by CORS: ${origin}`))
         }
       },
       credentials: true,
