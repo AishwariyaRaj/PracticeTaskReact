@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 import { Router } from 'express'
 import { findUserByEmail, getAllUsers, updateUserByEmail, upsertUser } from '../redis/store.js'
 import { sendPasswordResetEmail, sendWelcomeEmail } from '../email/mailer.js'
+import { authRateLimiter } from '../middleware/rateLimiter.js'
 
 const router = Router()
 
@@ -27,7 +28,7 @@ function sanitizeUser(user) {
   }
 }
 
-router.post('/register', async (req, res) => {
+router.post('/register', authRateLimiter, async (req, res) => {
   try {
     const { name, email, password } = req.body
 
@@ -70,7 +71,7 @@ router.post('/register', async (req, res) => {
   }
 })
 
-router.post('/login', async (req, res) => {
+router.post('/login', authRateLimiter, async (req, res) => {
   try {
     const { email, password } = req.body
 
@@ -98,7 +99,7 @@ router.post('/login', async (req, res) => {
   }
 })
 
-router.post('/forgot-password', async (req, res) => {
+router.post('/forgot-password', authRateLimiter, async (req, res) => {
   try {
     const { email } = req.body
 
@@ -143,7 +144,7 @@ router.post('/forgot-password', async (req, res) => {
   }
 })
 
-router.post('/reset-password', async (req, res) => {
+router.post('/reset-password', authRateLimiter, async (req, res) => {
   try {
     const { email, token, password } = req.body
 

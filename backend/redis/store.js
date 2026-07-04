@@ -1,5 +1,8 @@
 import { createClient } from 'redis'
 import { randomUUID } from 'crypto'
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
 const USERS_KEY = 'netpulse:users'
 const SWITCHES_KEY = 'netpulse:switches'
@@ -110,11 +113,44 @@ const initialNotifications = [
   },
 ]
 
-const memoryStore = {
-  users: new Map(),
-  switches: [...initialSwitches],
-  chartData: [...initialChartData],
-  notifications: [...initialNotifications],
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const DATA_DIR = path.resolve(__dirname, '../data')
+
+const FILES = {
+  users: path.join(DATA_DIR, 'users.json'),
+  switches: path.join(DATA_DIR, 'switches.json'),
+  chartData: path.join(DATA_DIR, 'chart-data.json'),
+  notifications: path.join(DATA_DIR, 'notifications.json'),
+}
+
+function ensureDataDir() {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true })
+  }
+}
+
+function readJsonFile(filePath, defaultValue) {
+  ensureDataDir()
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, JSON.stringify(defaultValue, null, 2))
+    return defaultValue
+  }
+  try {
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'))
+  } catch (error) {
+    console.error(`Error reading file ${filePath}:`, error)
+    return defaultValue
+  }
+}
+
+function writeJsonFile(filePath, value) {
+  ensureDataDir()
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(value, null, 2))
+  } catch (error) {
+    console.error(`Error writing to file ${filePath}:`, error)
+  }
 }
 
 let client = null
@@ -149,7 +185,7 @@ async function writeJsonKey(key, value) {
 
 async function readUsers() {
   if (!connected || !client) {
-    return [...memoryStore.users.values()].map((user) => clone(user))
+    return readJsonFile(FILES.users, [])
   }
 
   const records = await client.hGetAll(USERS_KEY)
@@ -158,7 +194,7 @@ async function readUsers() {
 
 async function writeUsers(users) {
   if (!connected || !client) {
-    memoryStore.users = new Map(users.map((user) => [user.email, clone(user)]))
+    writeJsonFile(FILES.users, users)
     return users
   }
 
@@ -174,16 +210,19 @@ async function writeUsers(users) {
 async function readSwitches(userId) {
   const key = userId ? `${SWITCHES_KEY}:${userId}` : SWITCHES_KEY
   if (!connected || !client) {
+    const allUserSwitches = readJsonFile(FILES.switches, {})
     if (userId) {
-      if (!memoryStore.userSwitches) {
-        memoryStore.userSwitches = new Map()
+      if (!allUserSwitches[userId]) {
+        allUserSwitches[userId] = clone(initialSwitches)
+        writeJsonFile(FILES.switches, allUserSwitches)
       }
-      if (!memoryStore.userSwitches.has(userId)) {
-        memoryStore.userSwitches.set(userId, clone(initialSwitches))
-      }
-      return clone(memoryStore.userSwitches.get(userId))
+      return clone(allUserSwitches[userId])
     }
-    return clone(memoryStore.switches)
+    if (!allUserSwitches.global) {
+      allUserSwitches.global = clone(initialSwitches)
+      writeJsonFile(FILES.switches, allUserSwitches)
+    }
+    return clone(allUserSwitches.global)
   }
 
   const raw = await client.get(key)
@@ -197,41 +236,49 @@ async function readSwitches(userId) {
 async function writeSwitches(switches, userId) {
   const key = userId ? `${SWITCHES_KEY}:${userId}` : SWITCHES_KEY
   if (!connected || !client) {
+    const allUserSwitches = readJsonFile(FILES.switches, {})
     if (userId) {
-      if (!memoryStore.userSwitches) {
-        memoryStore.userSwitches = new Map()
-      }
-      memoryStore.userSwitches.set(userId, clone(switches))
+      allUserSwitches[userId] = clone(switches)
     } else {
-      memoryStore.switches = clone(switches)
+      allUserSwitches.global = clone(switches)
     }
+    writeJsonFile(FILES.switches, allUserSwitches)
     return switches
   }
   return await writeJsonKey(key, switches)
 }
 
 async function readChartData() {
-  return await readJsonKey(CHART_KEY, clone(memoryStore.chartData))
+  if (!connected || !client) {
+    return readJsonFile(FILES.chartData, clone(initialChartData))
+  }
+  return await readJsonKey(CHART_KEY, clone(initialChartData))
 }
 
 async function writeChartData(chartData) {
-  memoryStore.chartData = clone(chartData)
+  if (!connected || !client) {
+    writeJsonFile(FILES.chartData, chartData)
+    return chartData
+  }
   return await writeJsonKey(CHART_KEY, chartData)
 }
 
 async function readNotifications(userId) {
   const key = userId ? `${NOTIFICATIONS_KEY}:${userId}` : NOTIFICATIONS_KEY
   if (!connected || !client) {
+    const allUserNotifications = readJsonFile(FILES.notifications, {})
     if (userId) {
-      if (!memoryStore.userNotifications) {
-        memoryStore.userNotifications = new Map()
+      if (!allUserNotifications[userId]) {
+        allUserNotifications[userId] = clone(initialNotifications)
+        writeJsonFile(FILES.notifications, allUserNotifications)
       }
-      if (!memoryStore.userNotifications.has(userId)) {
-        memoryStore.userNotifications.set(userId, clone(initialNotifications))
-      }
-      return clone(memoryStore.userNotifications.get(userId))
+      return clone(allUserNotifications[userId])
     }
-    return clone(memoryStore.notifications)
+    if (!allUserNotifications.global) {
+      allUserNotifications.global = clone(initialNotifications)
+      writeJsonFile(FILES.notifications, allUserNotifications)
+    }
+    return clone(allUserNotifications.global)
   }
 
   const raw = await client.get(key)
@@ -245,14 +292,13 @@ async function readNotifications(userId) {
 async function writeNotifications(notifications, userId) {
   const key = userId ? `${NOTIFICATIONS_KEY}:${userId}` : NOTIFICATIONS_KEY
   if (!connected || !client) {
+    const allUserNotifications = readJsonFile(FILES.notifications, {})
     if (userId) {
-      if (!memoryStore.userNotifications) {
-        memoryStore.userNotifications = new Map()
-      }
-      memoryStore.userNotifications.set(userId, clone(notifications))
+      allUserNotifications[userId] = clone(notifications)
     } else {
-      memoryStore.notifications = clone(notifications)
+      allUserNotifications.global = clone(notifications)
     }
+    writeJsonFile(FILES.notifications, allUserNotifications)
     return notifications
   }
   return await writeJsonKey(key, notifications)
@@ -444,4 +490,12 @@ export async function clearNotifications(userId) {
   await initializeStore()
   await writeNotifications([], userId)
   return []
+}
+
+export function getRedisClient() {
+  return connected ? client : null
+}
+
+export function isRedisConnected() {
+  return connected
 }
