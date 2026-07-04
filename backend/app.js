@@ -27,7 +27,11 @@ export function createApp() {
           return callback(null, true)
         }
         const cleanOrigin = origin.replace(/\/$/, '')
-        if (allowedOrigins.includes(cleanOrigin) || cleanOrigin.startsWith('http://localhost:')) {
+        if (
+          allowedOrigins.includes(cleanOrigin) ||
+          cleanOrigin.startsWith('http://localhost:') ||
+          /\.vercel\.app$/.test(cleanOrigin) // Allow all Vercel domains and previews
+        ) {
           callback(null, true)
         } else {
           callback(new Error(`Not allowed by CORS: ${origin}`))
