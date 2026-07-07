@@ -9,6 +9,7 @@ import NotFoundPage from './pages/NotFoundPage'
 import RegisterPage from './pages/RegisterPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import SwitchManagementPage from './pages/SwitchManagementPage'
+import ProfilePage from './pages/ProfilePage'
 import ProtectedRoute from './routes/ProtectedRoute'
 
 export default function App() {
@@ -26,6 +27,7 @@ export default function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/dashboard/switches" element={<SwitchManagementPage />} />
             <Route path="/dashboard/charts" element={<ChartDashboardPage />} />
+            <Route path="/dashboard/profile" element={<ProfilePage />} />
           </Route>
         </Route>
 

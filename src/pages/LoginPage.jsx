@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Eye, EyeOff } from 'lucide-react'
 import LoadingState from '../components/LoadingState'
 import { useAuth } from '../context/AuthContext'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
@@ -7,6 +8,11 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle'
 const initialForm = {
   email: '',
   password: '',
+}
+
+const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email) && email.toLowerCase().endsWith('.com')
 }
 
 export default function LoginPage() {
@@ -17,6 +23,7 @@ export default function LoginPage() {
   const [form, setForm] = useState(initialForm)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
+  const [showPassword, setShowPassword] = useState(false)
 
   const from = location.state?.from?.pathname ?? '/dashboard'
 
@@ -30,6 +37,12 @@ export default function LoginPage() {
     event.preventDefault()
     setSubmitting(true)
     setError(null)
+
+    if (!validateEmail(form.email)) {
+      setError('invalid email')
+      setSubmitting(false)
+      return
+    }
 
     try {
       await login(form)
@@ -64,7 +77,17 @@ export default function LoginPage() {
           </div>
           <div className="form-field">
             <label className="form-label">Password</label>
-            <input className="form-input" type="password" name="password" value={form.password} onChange={handleChange} placeholder="Enter your password" required />
+            <div className="password-field">
+              <input className="form-input" type={showPassword ? 'text' : 'password'} name="password" value={form.password} onChange={handleChange} placeholder="Enter your password" required />
+              <button
+                type="button"
+                className="password-eye-button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           {error ? <div className="form-alert form-alert--error">{error}</div> : null}

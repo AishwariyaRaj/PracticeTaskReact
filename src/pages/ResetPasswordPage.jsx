@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
+import { Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
@@ -13,6 +14,8 @@ export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState(null)
   const [error, setError] = useState(null)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   const email = searchParams.get('email') ?? ''
   const token = searchParams.get('token') ?? ''
@@ -56,11 +59,31 @@ export default function ResetPasswordPage() {
           </div>
           <div className="form-field">
             <label className="form-label">New password</label>
-            <input className="form-input" type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter a new password" required />
+            <div className="password-field">
+              <input className="form-input" type={showPassword ? 'text' : 'password'} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter a new password" required />
+              <button
+                type="button"
+                className="password-eye-button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
           <div className="form-field">
             <label className="form-label">Confirm password</label>
-            <input className="form-input" type="password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Confirm the new password" required />
+            <div className="password-field">
+              <input className="form-input" type={showConfirmPassword ? 'text' : 'password'} value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Confirm the new password" required />
+              <button
+                type="button"
+                className="password-eye-button"
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           {error ? <div className="form-alert form-alert--error">{error}</div> : null}

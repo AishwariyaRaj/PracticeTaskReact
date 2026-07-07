@@ -4,7 +4,7 @@ const ThemeContext = createContext(undefined)
 
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('netpulse_theme') || 'dark' // default to dark theme for that high-end hacker-NOC aesthetic
+    return localStorage.getItem('netpulse_theme') || 'light' // default to light theme for clean, user-friendly aesthetic
   })
 
   useEffect(() => {

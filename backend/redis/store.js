@@ -84,9 +84,14 @@ const initialSwitches = [
 
 const initialChartData = Array.from({ length: 24 }, (_, index) => {
   const timestamp = new Date(Date.now() - (23 - index) * 60 * 60 * 1000)
-  const min = 35 + index * 0.9
-  const median = min + 7 + Math.sin(index / 3) * 2
-  const max = median + 8 + Math.cos(index / 4)
+  const base = 45 + Math.sin(index / 3) * 10
+  // Simulate 5 device sensor values
+  const sensors = Array.from({ length: 5 }, (_, i) => base + Math.sin((index + i) / 2) * 5 + (i * 2))
+  const sortedSensors = [...sensors].sort((a, b) => a - b)
+  
+  const min = sortedSensors[0]
+  const median = sortedSensors[2] // Middle element for length 5
+  const max = sortedSensors[4]
 
   return {
     timestamp: timestamp.toISOString(),

@@ -3,7 +3,7 @@ import { addSwitch, deleteSwitch, getSwitches, updateSwitch, addNotification } f
 
 const router = Router()
 
-router.get('/switches', async (req, res) => {
+router.get('/switches/list', async (req, res) => {
   try {
     const switches = await getSwitches(req.user.id)
     return res.json({ items: switches })
@@ -12,7 +12,7 @@ router.get('/switches', async (req, res) => {
   }
 })
 
-router.post('/switches', async (req, res) => {
+router.post('/switches/create', async (req, res) => {
   try {
     const { model, physicalDevice, id, config, status } = req.body
 
@@ -35,7 +35,7 @@ router.post('/switches', async (req, res) => {
   }
 })
 
-router.put('/switches/:id', async (req, res) => {
+router.put('/switches/update/:id', async (req, res) => {
   try {
     const updated = await updateSwitch(req.params.id, req.body, req.user.id)
 
@@ -56,7 +56,7 @@ router.put('/switches/:id', async (req, res) => {
   }
 })
 
-router.delete('/switches/:id', async (req, res) => {
+router.delete('/switches/delete/:id', async (req, res) => {
   try {
     const removed = await deleteSwitch(req.params.id, req.user.id)
 

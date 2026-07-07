@@ -1,11 +1,12 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Network, BarChart3, LogOut, ChevronLeft, ChevronRight } from 'lucide-react'
+import { LayoutDashboard, Network, BarChart3, User, LogOut, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 const NAV = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/dashboard/switches', label: 'Switch Mgmt', icon: Network },
   { to: '/dashboard/charts', label: 'Chart Analytics', icon: BarChart3 },
+  { to: '/dashboard/profile', label: 'Profile', icon: User },
 ]
 
 export default function Sidebar({ isCollapsed, mobileOpen, onToggle, onCloseMobile }) {

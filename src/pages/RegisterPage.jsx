@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { Eye, EyeOff } from 'lucide-react'
 import LoadingState from '../components/LoadingState'
 import { useAuth } from '../context/AuthContext'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
@@ -11,6 +12,11 @@ const initialForm = {
   confirmPassword: '',
 }
 
+const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email) && email.toLowerCase().endsWith('.com')
+}
+
 export default function RegisterPage() {
   useDocumentTitle('Register')
   const { register, isAuthenticated, loading } = useAuth()
@@ -19,7 +25,8 @@ export default function RegisterPage() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
-  const [showPasswords, setShowPasswords] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   useEffect(() => {
     if (isAuthenticated && !loading) {
@@ -37,6 +44,12 @@ export default function RegisterPage() {
     setSubmitting(true)
     setError(null)
     setSuccess(null)
+
+    if (!validateEmail(form.email)) {
+      setError('invalid email')
+      setSubmitting(false)
+      return
+    }
 
     if (form.password !== form.confirmPassword) {
       setError('Passwords do not match.')
@@ -81,28 +94,28 @@ export default function RegisterPage() {
           <div className="form-field">
             <label className="form-label">Password</label>
             <div className="password-field">
-              <input className="form-input" type={showPasswords ? 'text' : 'password'} name="password" value={form.password} onChange={handleChange} placeholder="Create a strong password" required />
+              <input className="form-input" type={showPassword ? 'text' : 'password'} name="password" value={form.password} onChange={handleChange} placeholder="Create a strong password" required />
               <button
                 type="button"
-                className="password-toggle"
-                onClick={() => setShowPasswords((current) => !current)}
-                aria-label={showPasswords ? 'Hide password' : 'Show password'}
+                className="password-eye-button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
-                {showPasswords ? 'Hide' : 'Show'}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
           </div>
           <div className="form-field">
             <label className="form-label">Confirm password</label>
             <div className="password-field">
-              <input className="form-input" type={showPasswords ? 'text' : 'password'} name="confirmPassword" value={form.confirmPassword} onChange={handleChange} placeholder="Confirm your password" required />
+              <input className="form-input" type={showConfirmPassword ? 'text' : 'password'} name="confirmPassword" value={form.confirmPassword} onChange={handleChange} placeholder="Confirm your password" required />
               <button
                 type="button"
-                className="password-toggle"
-                onClick={() => setShowPasswords((current) => !current)}
-                aria-label={showPasswords ? 'Hide password' : 'Show password'}
+                className="password-eye-button"
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
               >
-                {showPasswords ? 'Hide' : 'Show'}
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
           </div>

@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import * as authService from '../services/authService'
+import api from '../services/api'
 
 const AuthContext = createContext(undefined)
 const USER_STORAGE_KEY = 'netpulse_user'
@@ -72,13 +72,13 @@ export function AuthProvider({ children }) {
   }, [])
 
   const login = useCallback(async (credentials) => {
-    const data = await authService.login(credentials)
-    return authenticate(data)
+    const response = await api.post('/login', credentials)
+    return authenticate(response.data)
   }, [authenticate])
 
   const register = useCallback(async (payload) => {
-    const data = await authService.register(payload)
-    return authenticate(data)
+    const response = await api.post('/register', payload)
+    return authenticate(response.data)
   }, [authenticate])
 
   const logout = useCallback(() => {
@@ -86,8 +86,20 @@ export function AuthProvider({ children }) {
     setAuthState({ user: null, token: null, isAuthenticated: false })
   }, [])
 
-  const forgotPassword = useCallback((payload) => authService.forgotPassword(payload), [])
-  const resetPassword = useCallback((payload) => authService.resetPassword(payload), [])
+  const updateProfile = useCallback(({ user, token }) => {
+    persistAuth({ user, token })
+    setAuthState({ user, token, isAuthenticated: true })
+  }, [])
+
+  const forgotPassword = useCallback(async (payload) => {
+    const response = await api.post('/forgot-password', payload)
+    return response.data
+  }, [])
+
+  const resetPassword = useCallback(async (payload) => {
+    const response = await api.post('/reset-password', payload)
+    return response.data
+  }, [])
 
   const value = useMemo(
     () => ({
@@ -98,10 +110,11 @@ export function AuthProvider({ children }) {
       login,
       register,
       logout,
+      updateProfile,
       forgotPassword,
       resetPassword,
     }),
-    [authState.isAuthenticated, authState.token, authState.user, forgotPassword, login, loading, logout, register, resetPassword]
+    [authState.isAuthenticated, authState.token, authState.user, forgotPassword, login, loading, logout, register, resetPassword, updateProfile]
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

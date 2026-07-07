@@ -8,6 +8,12 @@ import { authRateLimiter } from '../middleware/rateLimiter.js'
 
 const router = Router()
 
+const validateEmail = (email) => {
+  if (!email) return false
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email) && email.toLowerCase().endsWith('.com')
+}
+
 function buildToken(user) {
   return jwt.sign(
     {
@@ -34,6 +40,10 @@ router.post('/register', authRateLimiter, async (req, res) => {
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'Name, email, and password are required.' })
+    }
+
+    if (!validateEmail(email)) {
+      return res.status(400).json({ message: 'invalid email' })
     }
 
     console.log('[Register] Creating account request received.')
@@ -79,14 +89,18 @@ router.post('/login', authRateLimiter, async (req, res) => {
       return res.status(400).json({ message: 'Email and password are required.' })
     }
 
-    const user = await findUserByEmail(email)
+    if (!validateEmail(email)) {
+      return res.status(400).json({ message: 'invalid email' })
+    }
+
+    const user = await findUserByEmail(email.trim().toLowerCase())
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password.' })
+      return res.status(401).json({ message: 'invalid email' })
     }
 
     const passwordMatches = await bcrypt.compare(password, user.passwordHash)
     if (!passwordMatches) {
-      return res.status(401).json({ message: 'Invalid email or password.' })
+      return res.status(401).json({ message: 'password is wrong' })
     }
 
     return res.json({
@@ -105,6 +119,10 @@ router.post('/forgot-password', authRateLimiter, async (req, res) => {
 
     if (!email) {
       return res.status(400).json({ message: 'Email is required.' })
+    }
+
+    if (!validateEmail(email)) {
+      return res.status(400).json({ message: 'invalid email' })
     }
 
     console.log('[Forgot Password] Request received.')
@@ -152,6 +170,10 @@ router.post('/reset-password', authRateLimiter, async (req, res) => {
       return res.status(400).json({ message: 'Email, token, and password are required.' })
     }
 
+    if (!validateEmail(email)) {
+      return res.status(400).json({ message: 'invalid email' })
+    }
+
     const user = await findUserByEmail(email)
     if (!user || user.resetToken !== token) {
       return res.status(400).json({ message: 'The reset link is invalid or expired.' })
@@ -180,6 +202,76 @@ router.get('/me', async (req, res) => {
     return res.json({ totalUsers: users.length })
   } catch (error) {
     return res.status(500).json({ message: 'Unable to fetch user profile information.' })
+  }
+})
+
+import { requireAuth } from '../middleware/auth.js'
+
+router.put('/update-profile', requireAuth, async (req, res) => {
+  try {
+    const { name, email } = req.body
+    if (!name || !email) {
+      return res.status(400).json({ message: 'Name and email are required.' })
+    }
+    if (!validateEmail(email)) {
+      return res.status(400).json({ message: 'invalid email' })
+    }
+
+    const currentUserEmail = req.user.email
+    const user = await findUserByEmail(currentUserEmail)
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' })
+    }
+
+    if (email.toLowerCase() !== currentUserEmail.toLowerCase()) {
+      const taken = await findUserByEmail(email)
+      if (taken) {
+        return res.status(409).json({ message: 'This email is already in use.' })
+      }
+    }
+
+    const updated = await updateUserByEmail(currentUserEmail, async (u) => {
+      u.name = name.trim()
+      u.email = email.trim().toLowerCase()
+      return u
+    })
+
+    const token = buildToken(updated)
+    return res.json({
+      message: 'Profile updated successfully.',
+      token,
+      user: sanitizeUser(updated),
+    })
+  } catch (error) {
+    return res.status(500).json({ message: 'Unable to update profile.' })
+  }
+})
+
+router.put('/change-password', requireAuth, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Current password and new password are required.' })
+    }
+
+    const user = await findUserByEmail(req.user.email)
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' })
+    }
+
+    const matches = await bcrypt.compare(currentPassword, user.passwordHash)
+    if (!matches) {
+      return res.status(400).json({ message: 'password is wrong' })
+    }
+
+    await updateUserByEmail(req.user.email, async (u) => {
+      u.passwordHash = await bcrypt.hash(newPassword, 10)
+      return u
+    })
+
+    return res.json({ message: 'Password updated successfully.' })
+  } catch (error) {
+    return res.status(500).json({ message: 'Unable to update password.' })
   }
 })
 

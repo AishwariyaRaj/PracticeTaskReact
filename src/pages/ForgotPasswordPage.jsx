@@ -3,6 +3,11 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
+const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email) && email.toLowerCase().endsWith('.com')
+}
+
 export default function ForgotPasswordPage() {
   useDocumentTitle('Forgot Password')
   const { forgotPassword } = useAuth()
@@ -16,6 +21,12 @@ export default function ForgotPasswordPage() {
     setLoading(true)
     setMessage(null)
     setError(null)
+
+    if (!validateEmail(email)) {
+      setError('invalid email')
+      setLoading(false)
+      return
+    }
 
     try {
       const response = await forgotPassword({ email })

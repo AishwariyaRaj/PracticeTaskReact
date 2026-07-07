@@ -20,7 +20,7 @@ function formatTime(isoString) {
   }
 }
 
-export default function Header({ breadcrumbs = [], onHamburger }) {
+export default function Header({ breadcrumbs = [], onHamburger, searchValue = '', onSearchChange }) {
   const { user, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const [notifications, setNotifications] = useState([])
@@ -93,10 +93,9 @@ export default function Header({ breadcrumbs = [], onHamburger }) {
 
       {/* Breadcrumb */}
       <nav className="topbar-breadcrumb">
-        <Link to="/dashboard">Home</Link>
         {breadcrumbs.map((b, i) => (
           <span key={i}>
-            <span style={{ margin: '0 4px', opacity: 0.4 }}>/</span>
+            {i > 0 && <span style={{ margin: '0 4px', opacity: 0.4 }}>/</span>}
             <span>{b}</span>
           </span>
         ))}
@@ -105,7 +104,13 @@ export default function Header({ breadcrumbs = [], onHamburger }) {
       {/* Search */}
       <div className="topbar-search">
         <span className="topbar-search__icon"><Search size={15} /></span>
-        <input type="search" placeholder="Search..." aria-label="Global search" />
+        <input
+          type="search"
+          placeholder="Search..."
+          aria-label="Global search"
+          value={searchValue}
+          onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
+        />
       </div>
 
       {/* Actions */}
@@ -154,30 +159,10 @@ export default function Header({ breadcrumbs = [], onHamburger }) {
         </div>
 
         {/* Profile */}
-        <div className="topbar-user-wrapper" ref={profileRef}>
-          <div className="topbar-user" onClick={() => setShowProfile(prev => !prev)}>
-            <div className="topbar-avatar">{initials}</div>
-            <span className="topbar-username">{user?.name ?? 'Operator'}</span>
-          </div>
-
-          {showProfile && (
-            <div className="dropdown-menu dropdown-menu--profile">
-              <div className="profile-card">
-                <div className="profile-avatar-large">{initials}</div>
-                <div className="profile-info">
-                  <span className="profile-name">{user?.name ?? 'Operator'}</span>
-                  <span className="profile-email">{user?.email ?? 'operator@netpulse.com'}</span>
-                  <span className="profile-meta">Role: NOC Admin</span>
-                </div>
-                <div className="profile-actions">
-                  <button className="profile-logout-btn" onClick={logout}>
-                    Sign Out
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+        <Link to="/dashboard/profile" className="topbar-user" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <div className="topbar-avatar">{initials}</div>
+          <span className="topbar-username">{user?.name ?? 'Operator'}</span>
+        </Link>
       </div>
     </header>
   )
