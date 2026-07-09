@@ -140,7 +140,7 @@ export default function SwitchManagementPage() {
         <div>
           <div className="page-eyebrow">Switch Management</div>
           <h2>Inventory Control</h2>
-          <p>Search, add, edit and delete switch state using Redis-backed APIs.</p>
+          <p>Search, add, edit and delete switch state</p>
         </div>
         <button className="btn btn-primary" onClick={() => setModalState({ open: true, record: null })}>
           <Plus size={16} /> Add Switch
