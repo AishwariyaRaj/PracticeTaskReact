@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
-import { Eye, EyeOff, User, Lock, Settings, Key, Copy, Check } from 'lucide-react'
+import { Eye, EyeOff, User, Lock, Settings } from 'lucide-react'
 import api from '../services/api'
 
 export default function ProfilePage() {
@@ -34,10 +34,6 @@ export default function ProfilePage() {
   const [refreshInterval, setRefreshInterval] = useState('30')
   const [enableAlerts, setEnableAlerts] = useState(true)
   const [prefMessage, setPrefMessage] = useState(null)
-
-  // Copy API key state
-  const [copied, setCopied] = useState(false)
-  const mockApiKey = 'np_live_4a8d9b23f8c0e1d2c3b4a5f6e7d8c9b0'
 
   useEffect(() => {
     if (user) {
@@ -110,12 +106,6 @@ export default function ProfilePage() {
     e.preventDefault()
     setPrefMessage('Preferences saved successfully.')
     setTimeout(() => setPrefMessage(null), 3000)
-  }
-
-  const handleCopyKey = () => {
-    navigator.clipboard.writeText(mockApiKey)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
   }
 
   const initials = user?.name?.charAt(0)?.toUpperCase() ?? 'U'
@@ -248,7 +238,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Right Column: Password Change & API keys */}
+        {/* Right Column: Password Change */}
         <div className="page-stack">
           {/* Change Password */}
           <div className="noc-card">
@@ -375,55 +365,6 @@ export default function ProfilePage() {
                   Update Password
                 </button>
               </form>
-            </div>
-          </div>
-
-          {/* API Access */}
-          <div className="noc-card">
-            <div className="noc-card__header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <Key size={18} style={{ color: 'var(--primary)' }} />
-                <div>
-                  <div className="noc-card__title">CLI & API Integration</div>
-                  <div className="noc-card__sub">Authenticate external monitoring agents</div>
-                </div>
-              </div>
-            </div>
-            <div className="noc-card__body">
-              <div className="page-stack">
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                  Use this token to query switches or post alert telemetry logs into NetPulse via API:
-                </div>
-
-                <div 
-                  style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'space-between',
-                    background: 'var(--bg-soft)',
-                    border: '1px solid var(--border)',
-                    padding: '8px 12px',
-                    borderRadius: '4px',
-                    fontFamily: 'monospace',
-                    fontSize: '0.85rem'
-                  }}
-                >
-                  <span style={{ wordBreak: 'break-all', color: 'var(--text)' }}>{mockApiKey}</span>
-                  <button 
-                    type="button" 
-                    className="btn btn-icon btn-ghost" 
-                    style={{ padding: '6px', marginLeft: '8px' }}
-                    onClick={handleCopyKey}
-                    title="Copy API key"
-                  >
-                    {copied ? <Check size={14} style={{ color: 'var(--success)' }} /> : <Copy size={14} />}
-                  </button>
-                </div>
-
-                <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                  Do not share this key. If compromised, contact the system administrator to regenerate.
-                </div>
-              </div>
             </div>
           </div>
         </div>

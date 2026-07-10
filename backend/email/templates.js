@@ -136,6 +136,20 @@ export function passwordResetEmailTemplate(resetUrl) {
   })
 }
 
+function formatEmailTimestamp(timestamp) {
+  try {
+    const d = new Date(timestamp)
+    if (isNaN(d.getTime())) return timestamp
+    return d.toLocaleString('en-US', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+      timeZone: 'UTC'
+    }) + ' UTC'
+  } catch (e) {
+    return timestamp
+  }
+}
+
 export function clusterAlertEmailTemplate({ severity, message, timestamp }) {
   let accent = '#3b82f6'
   let badgeBg = '#1e3a8a'
@@ -157,6 +171,8 @@ export function clusterAlertEmailTemplate({ severity, message, timestamp }) {
     panelBorder = '#3b201a'
   }
 
+  const formattedTime = formatEmailTimestamp(timestamp)
+
   const extraContent = `
     <div style="margin-top:24px;padding:24px;border-radius:12px;background-color:${panelBg};border:1px solid ${panelBorder};">
       <table width="100%" border="0" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:14px;color:#94a3b8;">
@@ -174,7 +190,7 @@ export function clusterAlertEmailTemplate({ severity, message, timestamp }) {
         </tr>
         <tr>
           <td style="padding:8px 0;font-weight:600;color:#ffffff;">Timestamp</td>
-          <td style="padding:8px 0;font-family:monospace;color:#ffffff;">${timestamp}</td>
+          <td style="padding:8px 0;font-family:monospace;color:#ffffff;">${formattedTime}</td>
         </tr>
         <tr>
           <td valign="top" style="padding:8px 0;font-weight:600;color:#ffffff;">Description</td>

@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { LayoutDashboard, Network, BarChart3, User, LogOut, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import Logo from './Logo'
 
 const NAV = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -17,7 +18,9 @@ export default function Sidebar({ isCollapsed, mobileOpen, onToggle, onCloseMobi
     <aside className={`noc-sidebar${isCollapsed ? ' collapsed' : ''}${mobileOpen ? ' mobile-open' : ''}`}>
       {/* Brand */}
       <div className="sidebar-brand">
-        <div className="sidebar-brand__mark">N</div>
+        <div className="sidebar-brand__mark" style={{ background: 'none', boxShadow: 'none' }}>
+          <Logo size={24} />
+        </div>
         {!isCollapsed && (
           <div className="sidebar-brand__text">
             <span className="sidebar-brand__name">NetPulse NOC</span>

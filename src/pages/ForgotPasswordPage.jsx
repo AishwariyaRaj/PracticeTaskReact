@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import Logo from '../components/Logo'
 import { useAuth } from '../context/AuthContext'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
@@ -41,6 +42,10 @@ export default function ForgotPasswordPage() {
   return (
     <section className="auth-screen">
       <div className="auth-card">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '24px' }}>
+          <Logo size={24} />
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.25rem', color: 'var(--text)', letterSpacing: '-0.02em' }}>NetPulse NOC</span>
+        </div>
         <div className="auth-eyebrow">Account Recovery</div>
         <h1>Reset your password</h1>
         <p className="auth-subtitle">We will send a password reset email with a secure link if the account exists.</p>

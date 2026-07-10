@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import LoadingState from '../components/LoadingState'
+import Logo from '../components/Logo'
 import { useAuth } from '../context/AuthContext'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
@@ -78,6 +79,10 @@ export default function RegisterPage() {
   return (
     <section className="auth-screen auth-screen--register">
       <div className="auth-card">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '24px' }}>
+          <Logo size={24} />
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.25rem', color: 'var(--text)', letterSpacing: '-0.02em' }}>NetPulse NOC</span>
+        </div>
         <div className="auth-eyebrow">New Operator</div>
         <h1>Create your account</h1>
         <p className="auth-subtitle">Register to access the authenticated dashboard and Redis-backed management tools.</p>

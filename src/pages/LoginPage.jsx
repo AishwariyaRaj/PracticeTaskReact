@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import LoadingState from '../components/LoadingState'
+import Logo from '../components/Logo'
 import { useAuth } from '../context/AuthContext'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
@@ -66,6 +67,10 @@ export default function LoginPage() {
   return (
     <section className="auth-screen">
       <div className="auth-card">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '24px' }}>
+          <Logo size={24} />
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.25rem', color: 'var(--text)', letterSpacing: '-0.02em' }}>NetPulse NOC</span>
+        </div>
         <div className="auth-eyebrow">Secure Access</div>
         <h1>Sign in to Dashboard</h1>
         <p className="auth-subtitle">Manage switches, charts, and alerts from a single operational console.</p>

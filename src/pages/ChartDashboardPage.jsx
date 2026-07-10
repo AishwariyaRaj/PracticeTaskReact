@@ -365,7 +365,7 @@ export default function ChartDashboardPage() {
                     <tr>
                       <th>Timestamp</th>
                       <th>Min Value</th>
-                      <th>Median (Mathematically Computed)</th>
+                      <th>Median</th>
                       <th>Max Value</th>
                       <th>Simulated CPU Load</th>
                       <th>Simulated Memory Load</th>

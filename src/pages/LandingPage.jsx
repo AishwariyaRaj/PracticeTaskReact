@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Activity, ArrowRight, CheckCircle, Mail, Network, ShieldCheck, Terminal, Heart } from 'lucide-react'
 import Footer from '../components/Footer'
+import Logo from '../components/Logo'
 import { useAuth } from '../context/AuthContext'
 
 const features = [
@@ -82,7 +83,9 @@ export default function LandingPage() {
       <header className="landing-header">
         <div className="landing-header__wrapper">
           <Link to="/" className="landing-header__brand">
-            <span className="landing-header__logo">N</span>
+            <span className="landing-header__logo" style={{ background: 'none', boxShadow: 'none' }}>
+              <Logo size={20} />
+            </span>
             <span className="landing-header__name">NetPulse NOC</span>
             <span className="landing-header__status-pulse"></span>
           </Link>

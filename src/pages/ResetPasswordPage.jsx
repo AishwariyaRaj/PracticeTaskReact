@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
+import Logo from '../components/Logo'
 import { useAuth } from '../context/AuthContext'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
@@ -46,6 +47,10 @@ export default function ResetPasswordPage() {
   return (
     <section className="auth-screen">
       <div className="auth-card">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '24px' }}>
+          <Logo size={24} />
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '1.25rem', color: 'var(--text)', letterSpacing: '-0.02em' }}>NetPulse NOC</span>
+        </div>
         <div className="auth-eyebrow">Set New Credentials</div>
         <h1>Choose a new password</h1>
         <p className="auth-subtitle">Use the email link from the reset request to complete the password change.</p>

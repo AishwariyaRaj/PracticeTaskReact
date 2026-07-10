@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import Logo from './Logo'
 
 export default function Footer() {
   return (
@@ -7,7 +8,9 @@ export default function Footer() {
         <div className="footer__grid">
           <div className="footer__brand-col">
             <div className="footer__logo-wrap">
-              <span className="footer__logo-mark">N</span>
+              <span className="footer__logo-mark" style={{ background: 'none', boxShadow: 'none' }}>
+                <Logo size={20} />
+              </span>
               <span className="footer__logo-name">NetPulse NOC</span>
             </div>
             <p className="footer__description">
