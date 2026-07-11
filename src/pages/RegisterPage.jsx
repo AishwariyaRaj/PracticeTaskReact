@@ -85,7 +85,7 @@ export default function RegisterPage() {
         </div>
         <div className="auth-eyebrow">New Operator</div>
         <h1>Create your account</h1>
-        <p className="auth-subtitle">Register to access the authenticated dashboard and Redis-backed management tools.</p>
+        <p className="auth-subtitle">Register to access the authenticated dashboard</p>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="form-field">
