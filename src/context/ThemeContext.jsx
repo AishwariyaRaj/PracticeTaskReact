@@ -9,7 +9,13 @@ export function ThemeProvider({ children }) {
 
   useEffect(() => {
     const root = document.documentElement
-    if (theme === 'dark') {
+    const path = window.location.pathname.replace(/\/$/, '')
+    const isGuestPath = path === '' || ['/login', '/register', '/forgot-password', '/reset-password'].includes(path)
+
+    if (isGuestPath) {
+      root.classList.remove('dark')
+      root.setAttribute('data-theme', 'light')
+    } else if (theme === 'dark') {
       root.classList.add('dark')
       root.setAttribute('data-theme', 'dark')
     } else {
