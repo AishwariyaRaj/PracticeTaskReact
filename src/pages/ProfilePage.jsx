@@ -117,7 +117,7 @@ export default function ProfilePage() {
         <div>
           <div className="page-eyebrow">User Settings</div>
           <h2>Operator Profile</h2>
-          <p>Configure account credentials, dashboard settings, and API authentication.</p>
+          <p>Configure account credentials, Security Settings and dashboard settings</p>
         </div>
       </div>
 
